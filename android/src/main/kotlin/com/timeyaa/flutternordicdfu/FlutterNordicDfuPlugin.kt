@@ -10,13 +10,6 @@ import no.nordicsemi.android.dfu.DfuServiceInitiator
 
 
 class FlutterNordicDfuPlugin : MethodCallHandler {
-    companion object {
-        @JvmStatic
-        fun registerWith(registrar: Registrar) {
-            val channel = MethodChannel(registrar.messenger(), "flutter_nordic_dfu")
-            channel.setMethodCallHandler(FlutterNordicDfuPlugin(registrar.context()))
-        }
-    }
 
     /**
      * hold context
@@ -26,7 +19,15 @@ class FlutterNordicDfuPlugin : MethodCallHandler {
     /**
      * hole result
      */
-    private var mResult: Result? = null
+    private var pendingResult: Result? = null
+
+    companion object {
+        @JvmStatic
+        fun registerWith(registrar: Registrar) {
+            val channel = MethodChannel(registrar.messenger(), "flutter_nordic_dfu")
+            channel.setMethodCallHandler(FlutterNordicDfuPlugin(registrar.context()))
+        }
+    }
 
     constructor(context: Context) {
         mContext = context
@@ -34,11 +35,12 @@ class FlutterNordicDfuPlugin : MethodCallHandler {
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         if (call.method == "startDfu") {
+            pendingResult = result
             val address = call.argument<String>("address")
             val name = call.argument<String?>("name")
             val filePath = call.argument<String?>("filePath")
             if (address == null || filePath == null) {
-                result.error("address and filePath are required", null, null)
+                result.error("Abnormal parameter", "address and filePath are required", null)
                 return
             }
 
@@ -58,7 +60,7 @@ class FlutterNordicDfuPlugin : MethodCallHandler {
             starter.setDeviceName(name)
         }
 
-        mResult = result
+        pendingResult = result
 
         starter.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true)
         starter.setZip(filePath)
