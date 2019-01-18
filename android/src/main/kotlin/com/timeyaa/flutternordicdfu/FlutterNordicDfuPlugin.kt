@@ -21,16 +21,22 @@ class FlutterNordicDfuPlugin : MethodCallHandler {
      */
     private var pendingResult: Result? = null
 
+    /**
+     * 方法通道
+     */
+    private val channel: MethodChannel
+
     companion object {
         @JvmStatic
         fun registerWith(registrar: Registrar) {
-            val channel = MethodChannel(registrar.messenger(), "flutter_nordic_dfu")
-            channel.setMethodCallHandler(FlutterNordicDfuPlugin(registrar.context()))
+            FlutterNordicDfuPlugin(registrar)
         }
     }
 
-    constructor(context: Context) {
-        mContext = context
+    constructor(registrar: Registrar) {
+        mContext = registrar.context()
+        this.channel = MethodChannel(registrar.messenger(), "flutter_nordic_dfu")
+        channel.setMethodCallHandler(this)
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
@@ -53,7 +59,7 @@ class FlutterNordicDfuPlugin : MethodCallHandler {
     /**
      * Start Dfu
      */
-    fun startDfu(address: String, name: String?, filePath: String, result: Result) {
+    private fun startDfu(address: String, name: String?, filePath: String, result: Result) {
         val starter = DfuServiceInitiator(address)
                 .setKeepBond(false)
         if (name != null) {
