@@ -7,10 +7,18 @@ class FlutterNordicDfu {
   static const String NAMESPACE = 'com.timeyaa.flutter_nordic_dfu';
 
   static const MethodChannel _channel =
-      const MethodChannel('$NAMESPACE/method');
+  const MethodChannel('$NAMESPACE/method');
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
+  }
+
+  static Future startDfu(String address, String filePath, [String name]) async {
+    await _channel.invokeMethod('startDfu', <String, dynamic>{
+      'address': address,
+      'filePath': filePath,
+      'name': name
+    });
   }
 }

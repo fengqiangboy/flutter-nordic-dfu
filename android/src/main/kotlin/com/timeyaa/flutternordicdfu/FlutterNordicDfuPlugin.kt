@@ -41,19 +41,24 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-        if (call.method == "startDfu") {
-            pendingResult = result
-            val address = call.argument<String>("address")
-            val name = call.argument<String?>("name")
-            val filePath = call.argument<String?>("filePath")
-            if (address == null || filePath == null) {
-                result.error("Abnormal parameter", "address and filePath are required", null)
+        when {
+            call.method == "startDfu" -> {
+                pendingResult = result
+                val address = call.argument<String>("address")
+                val name = call.argument<String?>("name")
+                val filePath = call.argument<String?>("filePath")
+                if (address == null || filePath == null) {
+                    result.error("Abnormal parameter", "address and filePath are required", null)
+                    return
+                }
+
+                startDfu(address, name, filePath, result)
+            }
+            call.method == "getPlatformVersion" -> {
+                result.success("android")
                 return
             }
-
-            startDfu(address, name, filePath, result)
-        } else {
-            result.notImplemented()
+            else -> result.notImplemented()
         }
     }
 
