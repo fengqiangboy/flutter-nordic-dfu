@@ -9,12 +9,14 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 import no.nordicsemi.android.dfu.DfuServiceInitiator
 
 
-class FlutterNordicDfuPlugin : MethodCallHandler {
+class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
+
+    private val NAMESPACE = "com.timeyaa.flutter_nordic_dfu"
 
     /**
      * hold context
      */
-    private var mContext: Context
+    private var mContext: Context = registrar.context()
 
     /**
      * hole result
@@ -22,7 +24,7 @@ class FlutterNordicDfuPlugin : MethodCallHandler {
     private var pendingResult: Result? = null
 
     /**
-     * 方法通道
+     * Method Channel
      */
     private val channel: MethodChannel
 
@@ -33,9 +35,8 @@ class FlutterNordicDfuPlugin : MethodCallHandler {
         }
     }
 
-    constructor(registrar: Registrar) {
-        mContext = registrar.context()
-        this.channel = MethodChannel(registrar.messenger(), "flutter_nordic_dfu")
+    init {
+        this.channel = MethodChannel(registrar.messenger(), "$NAMESPACE/method")
         channel.setMethodCallHandler(this)
     }
 
