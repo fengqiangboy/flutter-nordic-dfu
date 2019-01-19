@@ -50,7 +50,6 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
     init {
         this.channel = MethodChannel(registrar.messenger(), "$NAMESPACE/method")
         channel.setMethodCallHandler(this)
-
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
