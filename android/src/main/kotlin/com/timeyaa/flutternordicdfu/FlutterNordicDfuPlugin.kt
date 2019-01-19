@@ -14,10 +14,6 @@ import no.nordicsemi.android.dfu.DfuServiceController
 import no.nordicsemi.android.dfu.DfuServiceInitiator
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper
 import java.util.*
-import android.support.v4.content.ContextCompat.getSystemService
-import android.app.NotificationManager
-import android.os.Handler
-import android.support.v4.os.HandlerCompat.postDelayed
 
 
 class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
