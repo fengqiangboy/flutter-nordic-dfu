@@ -1,7 +1,6 @@
 package com.timeyaa.flutternordicdfu
 
 import android.content.Context
-import android.util.Log
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ResourceUtils
 import io.flutter.plugin.common.MethodCall
@@ -14,7 +13,6 @@ import no.nordicsemi.android.dfu.DfuServiceController
 import no.nordicsemi.android.dfu.DfuServiceInitiator
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper
 import java.util.*
-import kotlin.collections.HashMap
 
 
 class FlutterNordicDfuPlugin(private val registrar: Registrar) : MethodCallHandler {
