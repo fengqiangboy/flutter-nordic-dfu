@@ -7,6 +7,18 @@ nrf52 chip from Nordic Semiconductor. Current ,it only works for Android.
 For more info about the DFU process, see: [Resources](#resources)
 
 
+## Usage
+
+### startDFU
+
+#### Examples
+
+```dart
+await FlutterNordicDfu.startDfu(
+        'EB:75:AD:E3:CA:CF', 'assets/318_nrf52810_190116_3L.zip',
+        fileInAsset: true, progressListener: ProgressListenerListener());
+```
+
 ## Resources
 
 -   [DFU Introduction](http://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v11.0.0/examples_ble_dfu.html?cp=6_0_0_4_3_1 "BLE Bootloader/DFU")
