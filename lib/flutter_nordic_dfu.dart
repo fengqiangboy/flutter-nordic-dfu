@@ -8,15 +8,16 @@ class FlutterNordicDfu {
   static const MethodChannel _channel =
       const MethodChannel('$NAMESPACE/method');
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
-
+  /// Start dfu handle
+  /// [address] android: mac address iOS: device uuid
+  /// [filePath] zip file path
+  /// [name] device name
+  /// [fileInAsset] is zip file in asset
+  /// [progressListener] Dfu progress listener
   static Future<String> startDfu(String address, String filePath,
       {String name,
       bool fileInAsset = false,
-      DfuProgressListener progressListener}) async {
+      DfuProgressListenerAdapter progressListener}) async {
     _channel.setMethodCallHandler((MethodCall call) {
       switch (call.method) {
         case "onDeviceConnected":
@@ -71,6 +72,7 @@ class FlutterNordicDfu {
           break;
       }
     });
+
     return await _channel.invokeMethod('startDfu', <String, dynamic>{
       'address': address,
       'filePath': filePath,
@@ -80,7 +82,7 @@ class FlutterNordicDfu {
   }
 }
 
-abstract class DfuProgressListener {
+abstract class DfuProgressListenerAdapter {
   void onDeviceConnected(String deviceAddress) {}
 
   void onDeviceConnecting(String deviceAddress) {}
