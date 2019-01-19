@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:flutter_nordic_dfu/flutter_nordic_dfu.dart';
 
 void main() => runApp(MyApp());
@@ -12,10 +9,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();
+  }
+
+  void test() async {
+    var s = await FlutterNordicDfu.startDfu(
+        'EB:75:AD:E3:CA:CF', 'assets/318_nrf52810_190116_3L.zip',
+        fileInAsset: true);
+    print(s);
   }
 
   @override
@@ -26,7 +29,12 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on'),
+          child: RaisedButton(
+            child: Text('Running on'),
+            onPressed: () {
+              test();
+            },
+          ),
         ),
       ),
     );

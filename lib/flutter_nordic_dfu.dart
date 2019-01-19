@@ -14,11 +14,13 @@ class FlutterNordicDfu {
     return version;
   }
 
-  static Future startDfu(String address, String filePath, [String name]) async {
-    await _channel.invokeMethod('startDfu', <String, dynamic>{
+  static Future<String> startDfu(String address, String filePath,
+      {String name, bool fileInAsset = false}) async {
+    return await _channel.invokeMethod('startDfu', <String, dynamic>{
       'address': address,
       'filePath': filePath,
-      'name': name
+      'name': name,
+      'fileInAsset': fileInAsset
     });
   }
 }
