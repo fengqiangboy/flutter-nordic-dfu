@@ -105,62 +105,62 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
     private val mDfuProgressListener = object : DfuProgressListenerAdapter() {
         override fun onDeviceConnected(deviceAddress: String?) {
             super.onDeviceConnected(deviceAddress)
-            Log.i("FlutterNordicDfuPlugin", "onDeviceConnected")
+            Log.d("FlutterNordicDfuPlugin", "onDeviceConnected -  deviceAddress: $deviceAddress")
         }
 
         override fun onError(deviceAddress: String?, error: Int, errorType: Int, message: String?) {
             super.onError(deviceAddress, error, errorType, message)
-            Log.e("FlutterNordicDfuPlugin", message)
+            Log.e("FlutterNordicDfuPlugin", "onError -  deviceAddress: $deviceAddress, error: $error, errorType: $errorType, message: $message")
         }
 
         override fun onDeviceConnecting(deviceAddress: String?) {
             super.onDeviceConnecting(deviceAddress)
-            Log.i("FlutterNordicDfuPlugin", "onDeviceConnecting")
+            Log.d("FlutterNordicDfuPlugin", "onDeviceConnecting - deviceAddress: $deviceAddress")
         }
 
         override fun onDeviceDisconnected(deviceAddress: String?) {
             super.onDeviceDisconnected(deviceAddress)
-            Log.i("FlutterNordicDfuPlugin", "onDeviceDisconnected")
+            Log.d("FlutterNordicDfuPlugin", "onDeviceDisconnected - deviceAddress: $deviceAddress")
         }
 
         override fun onDeviceDisconnecting(deviceAddress: String?) {
             super.onDeviceDisconnecting(deviceAddress)
-            Log.i("FlutterNordicDfuPlugin", "onDeviceDisconnecting")
+            Log.d("FlutterNordicDfuPlugin", "onDeviceDisconnecting - deviceAddress: $deviceAddress")
         }
 
         override fun onDfuAborted(deviceAddress: String?) {
             super.onDfuAborted(deviceAddress)
-            Log.i("FlutterNordicDfuPlugin", "onDfuAborted")
+            Log.d("FlutterNordicDfuPlugin", "onDfuAborted - deviceAddress: $deviceAddress")
         }
 
         override fun onDfuCompleted(deviceAddress: String?) {
             super.onDfuCompleted(deviceAddress)
-            Log.i("FlutterNordicDfuPlugin", "onDfuCompleted")
+            Log.d("FlutterNordicDfuPlugin", "onDfuCompleted - deviceAddress: $deviceAddress")
         }
 
         override fun onDfuProcessStarted(deviceAddress: String?) {
             super.onDfuProcessStarted(deviceAddress)
-            Log.i("FlutterNordicDfuPlugin", "onDfuProcessStarted")
+            Log.d("FlutterNordicDfuPlugin", "onDfuProcessStarted - deviceAddress: $deviceAddress")
         }
 
         override fun onDfuProcessStarting(deviceAddress: String?) {
             super.onDfuProcessStarting(deviceAddress)
-            Log.i("FlutterNordicDfuPlugin", "onDfuProcessStarting")
+            Log.d("FlutterNordicDfuPlugin", "onDfuProcessStarting - deviceAddress: $deviceAddress")
         }
 
         override fun onEnablingDfuMode(deviceAddress: String?) {
             super.onEnablingDfuMode(deviceAddress)
-            Log.i("FlutterNordicDfuPlugin", "onEnablingDfuMode")
+            Log.d("FlutterNordicDfuPlugin", "onEnablingDfuMode - deviceAddress: $deviceAddress")
         }
 
         override fun onFirmwareValidating(deviceAddress: String?) {
             super.onFirmwareValidating(deviceAddress)
-            Log.i("FlutterNordicDfuPlugin", "onFirmwareValidating")
+            Log.d("FlutterNordicDfuPlugin", "onFirmwareValidating - deviceAddress: $deviceAddress")
         }
 
         override fun onProgressChanged(deviceAddress: String?, percent: Int, speed: Float, avgSpeed: Float, currentPart: Int, partsTotal: Int) {
             super.onProgressChanged(deviceAddress, percent, speed, avgSpeed, currentPart, partsTotal)
-            Log.i("FlutterNordicDfuPlugin", "onProgressChanged")
+            Log.d("FlutterNordicDfuPlugin", "onProgressChanged - deviceAddress: $deviceAddress, percent: $percent, speed: $speed, avgSpeed: $avgSpeed, currentPart: $currentPart, partsTotal: $partsTotal")
         }
     }
 }
