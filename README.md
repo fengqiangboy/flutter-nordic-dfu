@@ -17,6 +17,16 @@ For more info about the DFU process, see: [Resources](#resources)
 await FlutterNordicDfu.startDfu(
         'EB:75:AD:E3:CA:CF', 'assets/318_nrf52810_190116_3L.zip',
         fileInAsset: true, progressListener: ProgressListenerListener());
+
+class ProgressListenerListener extends DfuProgressListenerAdapter {
+  @override
+  void onProgressChanged(String deviceAddress, int percent, double speed,
+      double avgSpeed, int currentPart, int partsTotal) {
+    super.onProgressChanged(
+        deviceAddress, percent, speed, avgSpeed, currentPart, partsTotal);
+    print('deviceAddress: $deviceAddress, percent: $percent');
+  }
+}
 ```
 
 ## Resources
