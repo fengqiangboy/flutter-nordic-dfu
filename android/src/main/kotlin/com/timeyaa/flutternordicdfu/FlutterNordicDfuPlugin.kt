@@ -1,6 +1,7 @@
 package com.timeyaa.flutternordicdfu
 
 import android.content.Context
+import android.support.annotation.Nullable
 import android.util.Log
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ResourceUtils
@@ -14,9 +15,12 @@ import no.nordicsemi.android.dfu.DfuServiceController
 import no.nordicsemi.android.dfu.DfuServiceInitiator
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper
 import java.util.*
+import kotlin.collections.HashMap
 
 
 class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
+
+    private val TAG = "FlutterNordicDfuPlugin"
 
     private val NAMESPACE = "com.timeyaa.flutter_nordic_dfu"
 
@@ -98,18 +102,36 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
         pendingResult = result
 
         starter.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true)
-        controller = starter.start(registrar.activity(), DfuService::class.java)
+        controller = starter.start(mContext, DfuService::class.java)
+    }
+
+    /**
+     * send event to flutter
+     */
+    private fun sendEvent(eventName: String, @Nullable params: HashMap<String, String>) {
+
+    }
+
+    /**
+     * send dfu state to flutter when state change
+     */
+    private fun sendStateUpdate(state: String, deviceAddress: String) {
+        val map = hashMapOf<String, String>()
+        Log.d(TAG, "State: $state")
+        map["state"] = state
+        map["deviceAddress"] = deviceAddress
+        sendEvent("DFUStateChanged", map)
     }
 
     private val mDfuProgressListener = object : DfuProgressListenerAdapter() {
         override fun onDeviceConnected(deviceAddress: String?) {
             super.onDeviceConnected(deviceAddress)
-            Log.d("FlutterNordicDfuPlugin", "onDeviceConnected -  deviceAddress: $deviceAddress")
+            Log.d(TAG, "onDeviceConnected -  deviceAddress: $deviceAddress")
         }
 
         override fun onError(deviceAddress: String?, error: Int, errorType: Int, message: String?) {
             super.onError(deviceAddress, error, errorType, message)
-            Log.e("FlutterNordicDfuPlugin", "onError -  deviceAddress: $deviceAddress, error: $error, errorType: $errorType, message: $message")
+            Log.e(TAG, "onError -  deviceAddress: $deviceAddress, error: $error, errorType: $errorType, message: $message")
 
             pendingResult?.error("2", "DFU FAILED", "device address: $deviceAddress")
             pendingResult = null
@@ -117,22 +139,22 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
 
         override fun onDeviceConnecting(deviceAddress: String?) {
             super.onDeviceConnecting(deviceAddress)
-            Log.d("FlutterNordicDfuPlugin", "onDeviceConnecting - deviceAddress: $deviceAddress")
+            Log.d(TAG, "onDeviceConnecting - deviceAddress: $deviceAddress")
         }
 
         override fun onDeviceDisconnected(deviceAddress: String?) {
             super.onDeviceDisconnected(deviceAddress)
-            Log.d("FlutterNordicDfuPlugin", "onDeviceDisconnected - deviceAddress: $deviceAddress")
+            Log.d(TAG, "onDeviceDisconnected - deviceAddress: $deviceAddress")
         }
 
         override fun onDeviceDisconnecting(deviceAddress: String?) {
             super.onDeviceDisconnecting(deviceAddress)
-            Log.d("FlutterNordicDfuPlugin", "onDeviceDisconnecting - deviceAddress: $deviceAddress")
+            Log.d(TAG, "onDeviceDisconnecting - deviceAddress: $deviceAddress")
         }
 
         override fun onDfuAborted(deviceAddress: String?) {
             super.onDfuAborted(deviceAddress)
-            Log.d("FlutterNordicDfuPlugin", "onDfuAborted - deviceAddress: $deviceAddress")
+            Log.d(TAG, "onDfuAborted - deviceAddress: $deviceAddress")
 
             pendingResult?.error("2", "DFU ABORTED", "device address: $deviceAddress")
             pendingResult = null
@@ -140,7 +162,7 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
 
         override fun onDfuCompleted(deviceAddress: String?) {
             super.onDfuCompleted(deviceAddress)
-            Log.d("FlutterNordicDfuPlugin", "onDfuCompleted - deviceAddress: $deviceAddress")
+            Log.d(TAG, "onDfuCompleted - deviceAddress: $deviceAddress")
 
             pendingResult?.success(deviceAddress)
             pendingResult = null
@@ -148,22 +170,22 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
 
         override fun onDfuProcessStarted(deviceAddress: String?) {
             super.onDfuProcessStarted(deviceAddress)
-            Log.d("FlutterNordicDfuPlugin", "onDfuProcessStarted - deviceAddress: $deviceAddress")
+            Log.d(TAG, "onDfuProcessStarted - deviceAddress: $deviceAddress")
         }
 
         override fun onDfuProcessStarting(deviceAddress: String?) {
             super.onDfuProcessStarting(deviceAddress)
-            Log.d("FlutterNordicDfuPlugin", "onDfuProcessStarting - deviceAddress: $deviceAddress")
+            Log.d(TAG, "onDfuProcessStarting - deviceAddress: $deviceAddress")
         }
 
         override fun onEnablingDfuMode(deviceAddress: String?) {
             super.onEnablingDfuMode(deviceAddress)
-            Log.d("FlutterNordicDfuPlugin", "onEnablingDfuMode - deviceAddress: $deviceAddress")
+            Log.d(TAG, "onEnablingDfuMode - deviceAddress: $deviceAddress")
         }
 
         override fun onFirmwareValidating(deviceAddress: String?) {
             super.onFirmwareValidating(deviceAddress)
-            Log.d("FlutterNordicDfuPlugin", "onFirmwareValidating - deviceAddress: $deviceAddress")
+            Log.d(TAG, "onFirmwareValidating - deviceAddress: $deviceAddress")
         }
 
         override fun onProgressChanged(deviceAddress: String?, percent: Int, speed: Float, avgSpeed: Float, currentPart: Int, partsTotal: Int) {
