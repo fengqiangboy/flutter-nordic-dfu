@@ -107,31 +107,34 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
 
     /**
      * send event to flutter
+     * @param eventName 事件名称
      */
-    private fun sendEvent(eventName: String, @Nullable params: HashMap<String, String>) {
+    private fun sendEvent(eventName: String, params: HashMap<String, String>?) {
 
     }
 
     /**
      * send dfu state to flutter when state change
      */
-    private fun sendStateUpdate(state: String, deviceAddress: String) {
+    private fun sendStateUpdate(state: String, deviceAddress: String?) {
         val map = hashMapOf<String, String>()
         Log.d(TAG, "State: $state")
         map["state"] = state
-        map["deviceAddress"] = deviceAddress
+        if (deviceAddress != null) {
+            map["deviceAddress"] = deviceAddress
+        }
         sendEvent("DFUStateChanged", map)
     }
 
     private val mDfuProgressListener = object : DfuProgressListenerAdapter() {
         override fun onDeviceConnected(deviceAddress: String?) {
             super.onDeviceConnected(deviceAddress)
-            Log.d(TAG, "onDeviceConnected -  deviceAddress: $deviceAddress")
+            sendStateUpdate("CONNECTED", deviceAddress)
         }
 
         override fun onError(deviceAddress: String?, error: Int, errorType: Int, message: String?) {
             super.onError(deviceAddress, error, errorType, message)
-            Log.e(TAG, "onError -  deviceAddress: $deviceAddress, error: $error, errorType: $errorType, message: $message")
+            sendStateUpdate("DFU_FAILED", deviceAddress)
 
             pendingResult?.error("2", "DFU FAILED", "device address: $deviceAddress")
             pendingResult = null
@@ -139,53 +142,55 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
 
         override fun onDeviceConnecting(deviceAddress: String?) {
             super.onDeviceConnecting(deviceAddress)
-            Log.d(TAG, "onDeviceConnecting - deviceAddress: $deviceAddress")
+            sendStateUpdate("CONNECTING", deviceAddress)
         }
 
         override fun onDeviceDisconnected(deviceAddress: String?) {
             super.onDeviceDisconnected(deviceAddress)
-            Log.d(TAG, "onDeviceDisconnected - deviceAddress: $deviceAddress")
+            sendStateUpdate("DISCONNECTED", deviceAddress)
         }
 
         override fun onDeviceDisconnecting(deviceAddress: String?) {
             super.onDeviceDisconnecting(deviceAddress)
-            Log.d(TAG, "onDeviceDisconnecting - deviceAddress: $deviceAddress")
+            sendStateUpdate("DEVICE_DISCONNECTING", deviceAddress)
         }
 
         override fun onDfuAborted(deviceAddress: String?) {
             super.onDfuAborted(deviceAddress)
-            Log.d(TAG, "onDfuAborted - deviceAddress: $deviceAddress")
 
             pendingResult?.error("2", "DFU ABORTED", "device address: $deviceAddress")
             pendingResult = null
+
+            sendStateUpdate("DFU_ABORTED", deviceAddress)
         }
 
         override fun onDfuCompleted(deviceAddress: String?) {
             super.onDfuCompleted(deviceAddress)
-            Log.d(TAG, "onDfuCompleted - deviceAddress: $deviceAddress")
 
             pendingResult?.success(deviceAddress)
             pendingResult = null
+
+            sendStateUpdate("DFU_COMPLETED", deviceAddress)
         }
 
         override fun onDfuProcessStarted(deviceAddress: String?) {
             super.onDfuProcessStarted(deviceAddress)
-            Log.d(TAG, "onDfuProcessStarted - deviceAddress: $deviceAddress")
+            sendStateUpdate("DFU_PROCESS_STARTED", deviceAddress)
         }
 
         override fun onDfuProcessStarting(deviceAddress: String?) {
             super.onDfuProcessStarting(deviceAddress)
-            Log.d(TAG, "onDfuProcessStarting - deviceAddress: $deviceAddress")
+            sendStateUpdate("DFU_PROCESS_STARTING", deviceAddress)
         }
 
         override fun onEnablingDfuMode(deviceAddress: String?) {
             super.onEnablingDfuMode(deviceAddress)
-            Log.d(TAG, "onEnablingDfuMode - deviceAddress: $deviceAddress")
+            sendStateUpdate("ENABLING_DFU_MODE", deviceAddress)
         }
 
         override fun onFirmwareValidating(deviceAddress: String?) {
             super.onFirmwareValidating(deviceAddress)
-            Log.d(TAG, "onFirmwareValidating - deviceAddress: $deviceAddress")
+            sendStateUpdate("FIRMWARE_VALIDATING", deviceAddress)
         }
 
         override fun onProgressChanged(deviceAddress: String?, percent: Int, speed: Float, avgSpeed: Float, currentPart: Int, partsTotal: Int) {
