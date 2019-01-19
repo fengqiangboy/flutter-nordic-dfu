@@ -14,6 +14,10 @@ import no.nordicsemi.android.dfu.DfuServiceController
 import no.nordicsemi.android.dfu.DfuServiceInitiator
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper
 import java.util.*
+import android.support.v4.content.ContextCompat.getSystemService
+import android.app.NotificationManager
+import android.os.Handler
+import android.support.v4.os.HandlerCompat.postDelayed
 
 
 class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
@@ -111,6 +115,9 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
         override fun onError(deviceAddress: String?, error: Int, errorType: Int, message: String?) {
             super.onError(deviceAddress, error, errorType, message)
             Log.e("FlutterNordicDfuPlugin", "onError -  deviceAddress: $deviceAddress, error: $error, errorType: $errorType, message: $message")
+
+            pendingResult?.error("2", "DFU FAILED", "device address: $deviceAddress")
+            pendingResult = null
         }
 
         override fun onDeviceConnecting(deviceAddress: String?) {
@@ -131,11 +138,17 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
         override fun onDfuAborted(deviceAddress: String?) {
             super.onDfuAborted(deviceAddress)
             Log.d("FlutterNordicDfuPlugin", "onDfuAborted - deviceAddress: $deviceAddress")
+
+            pendingResult?.error("2", "DFU ABORTED", "device address: $deviceAddress")
+            pendingResult = null
         }
 
         override fun onDfuCompleted(deviceAddress: String?) {
             super.onDfuCompleted(deviceAddress)
             Log.d("FlutterNordicDfuPlugin", "onDfuCompleted - deviceAddress: $deviceAddress")
+
+            pendingResult?.success(deviceAddress)
+            pendingResult = null
         }
 
         override fun onDfuProcessStarted(deviceAddress: String?) {
