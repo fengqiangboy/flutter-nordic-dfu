@@ -42,20 +42,20 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
     companion object {
         @JvmStatic
         fun registerWith(registrar: Registrar) {
-            FlutterNordicDfuPlugin(registrar)
-
+            val instance = FlutterNordicDfuPlugin(registrar)
+            DfuServiceListenerHelper.registerProgressListener(registrar.context(), instance.mDfuProgressListener)
         }
     }
 
     init {
         this.channel = MethodChannel(registrar.messenger(), "$NAMESPACE/method")
         channel.setMethodCallHandler(this)
+
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when {
             call.method == "startDfu" -> {
-                pendingResult = result
                 val address = call.argument<String>("address")
                 val name = call.argument<String?>("name")
                 var filePath = call.argument<String?>("filePath")
@@ -74,6 +74,7 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
                     return
                 }
 
+                pendingResult = result
                 startDfu(address, name, filePath, result)
             }
             call.method == "getPlatformVersion" -> {
@@ -98,7 +99,6 @@ class FlutterNordicDfuPlugin(registrar: Registrar) : MethodCallHandler {
         pendingResult = result
 
         starter.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true)
-        DfuServiceListenerHelper.registerProgressListener(registrar.activity(), mDfuProgressListener)
         controller = starter.start(registrar.activity(), DfuService::class.java)
     }
 
