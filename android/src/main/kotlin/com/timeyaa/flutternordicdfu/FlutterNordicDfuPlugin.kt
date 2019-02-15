@@ -1,8 +1,6 @@
 package com.timeyaa.flutternordicdfu
 
 import android.content.Context
-import com.blankj.utilcode.util.PathUtils
-import com.blankj.utilcode.util.ResourceUtils
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -12,7 +10,6 @@ import no.nordicsemi.android.dfu.DfuProgressListenerAdapter
 import no.nordicsemi.android.dfu.DfuServiceController
 import no.nordicsemi.android.dfu.DfuServiceInitiator
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper
-import java.util.*
 
 
 class FlutterNordicDfuPlugin(private val registrar: Registrar) : MethodCallHandler {
@@ -57,15 +54,6 @@ class FlutterNordicDfuPlugin(private val registrar: Registrar) : MethodCallHandl
                 val address = call.argument<String>("address")
                 val name = call.argument<String?>("name")
                 var filePath = call.argument<String?>("filePath")
-                val fileInAsset = call.argument<Boolean>("fileInAsset") ?: false
-
-                if (fileInAsset) {
-                    filePath = registrar.lookupKeyForAsset(filePath)
-
-                    val tempFileName = PathUtils.getExternalAppCachePath() + UUID.randomUUID().toString()
-                    ResourceUtils.copyFileFromAssets(filePath, tempFileName)
-                    filePath = tempFileName
-                }
 
                 if (address == null || filePath == null) {
                     result.error("Abnormal parameter", "address and filePath are required", null)
