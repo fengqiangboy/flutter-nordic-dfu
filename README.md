@@ -15,7 +15,7 @@ For more info about the DFU process, see: [Resources](#resources)
 ```dart
 await FlutterNordicDfu.startDfu(
         'EB:75:AD:E3:CA:CF', 'assets/318_nrf52810_190116_3L.zip',
-        fileInAsset: true, progressListener: ProgressListenerListener());
+         progressListener: ProgressListenerListener());
 
 class ProgressListenerListener extends DfuProgressListenerAdapter {
   @override
