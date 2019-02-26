@@ -10,3 +10,8 @@
 
 * Finish iOS version
 
+## 0.2.1
+
+* Update android kotlin version to 1.3.21
+* Update com.android.tools.build:gradle to 3.3.1
+
