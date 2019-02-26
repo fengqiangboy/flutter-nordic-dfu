@@ -41,12 +41,6 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
     }
     
     private func startDfu(_ address: String, name: String?, filePath: String, result: @escaping FlutterResult) {
-        let key = registrar.lookupKey(forAsset: filePath)
-        let fileURL = Bundle.main.url(forResource: key, withExtension: nil)
-        if (fileURL == nil) {
-            result(FlutterError(code: "FILE_NOT_FOUND", message: "File not found", details: nil))
-        }
-        
         guard let uuid = UUID(uuidString: address) else {
             result(FlutterError(code: "DEVICE_ADDRESS_ERROR", message: "Device address conver to uuid failed", details: "Device uuid \(address) convert to uuid failed"))
             return
