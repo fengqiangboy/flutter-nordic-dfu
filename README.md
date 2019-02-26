@@ -3,6 +3,8 @@
 This library allows you to do a Device Firmware Update (DFU) of your nrf51 or
 nrf52 chip from Nordic Semiconductor. It works for Android and iOS fine.
 
+This is the implementation of the reference "[react-native-nordic-dfu](https://github.com/Pilloxa/react-native-nordic-dfu)"
+
 For more info about the DFU process, see: [Resources](#resources)
 
 
