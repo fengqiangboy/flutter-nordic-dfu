@@ -5,8 +5,6 @@ import CoreBluetooth
 
 public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDelegate, DFUProgressDelegate, LoggerDelegate, CBCentralManagerDelegate {
     
-    
-    
     let registrar: FlutterPluginRegistrar
     let channel: FlutterMethodChannel
     var pendingResult: FlutterResult?
@@ -88,9 +86,7 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
             channel.invokeMethod("onDeviceDisconnecting", arguments: deviceAddress)
         case .aborted:
             pendingResult?(FlutterError(code: "DFU_ABORRED", message: "Device address: \(deviceAddress!)", details: nil))
-            
             pendingResult = nil
-            
             channel.invokeMethod("onDfuAborted", arguments: deviceAddress)
         case .connecting:
             channel.invokeMethod("onDeviceConnecting", arguments: deviceAddress)
