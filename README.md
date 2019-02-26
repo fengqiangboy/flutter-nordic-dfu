@@ -1,7 +1,7 @@
 # flutter-nordic-dfu [![pub package](https://img.shields.io/pub/v/flutter-nordic-dfu.svg)](https://pub.dartlang.org/packages/flutter_nordic_dfu)
 
 This library allows you to do a Device Firmware Update (DFU) of your nrf51 or
-nrf52 chip from Nordic Semiconductor. Current ,it only works for Android.
+nrf52 chip from Nordic Semiconductor. It works for Android and iOS fine.
 
 For more info about the DFU process, see: [Resources](#resources)
 
