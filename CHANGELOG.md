@@ -15,3 +15,7 @@
 * Update android kotlin version to 1.3.21
 * Update com.android.tools.build:gradle to 3.3.1
 
+# 0.3.0
+
+* Down kotlin version to 1.2.71
+
