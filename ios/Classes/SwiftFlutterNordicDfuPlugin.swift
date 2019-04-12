@@ -67,6 +67,7 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
         deviceAddress = address
         
         _ = dfuInitiator.start()
+        print("dfuInitiator have start")
     }
     
     //MARK: DFUServiceDelegate
@@ -75,27 +76,36 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
         case .completed:
             pendingResult?(deviceAddress)
             pendingResult = nil
+            print("\(deviceAddress!) onDfuCompleted")
             channel.invokeMethod("onDfuCompleted", arguments: deviceAddress)
         case .disconnecting:
+            print("\(deviceAddress!) onDeviceDisconnecting")
             channel.invokeMethod("onDeviceDisconnecting", arguments: deviceAddress)
         case .aborted:
             pendingResult?(FlutterError(code: "DFU_ABORRED", message: "Device address: \(deviceAddress!)", details: nil))
             pendingResult = nil
+            print("\(deviceAddress!) onDfuAborted")
             channel.invokeMethod("onDfuAborted", arguments: deviceAddress)
         case .connecting:
+            print("\(deviceAddress!) onDeviceConnecting")
             channel.invokeMethod("onDeviceConnecting", arguments: deviceAddress)
         case .starting:
+            print("\(deviceAddress!) onDfuProcessStarting")
             channel.invokeMethod("onDfuProcessStarting", arguments: deviceAddress)
         case .enablingDfuMode:
+            print("\(deviceAddress!) onEnablingDfuMode")
             channel.invokeMethod("onEnablingDfuMode", arguments: deviceAddress)
         case .validating:
+            print("\(deviceAddress!) onFirmwareValidating")
             channel.invokeMethod("onFirmwareValidating", arguments: deviceAddress)
         case .uploading:
+            print("\(deviceAddress!) onFirmwareUploading")
             channel.invokeMethod("onFirmwareUploading", arguments: deviceAddress)
         }
     }
     
     public func dfuError(_ error: DFUError, didOccurWithMessage message: String) {
+        print("\(deviceAddress!) onError, message : \(message)")
         channel.invokeMethod("onError", arguments: deviceAddress)
         
         pendingResult?(FlutterError(code: "DFU_FAILED", message: "Device address: \(deviceAddress!)", details: nil))
@@ -104,6 +114,7 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
     
     //MARK: DFUProgressDelegate
     public func dfuProgressDidChange(for part: Int, outOf totalParts: Int, to progress: Int, currentSpeedBytesPerSecond: Double, avgSpeedBytesPerSecond: Double) {
+        print("onProgressChanged: \(progress)")
         channel.invokeMethod("onProgressChanged", arguments: [
             "percent": progress,
             "speed": currentSpeedBytesPerSecond,
