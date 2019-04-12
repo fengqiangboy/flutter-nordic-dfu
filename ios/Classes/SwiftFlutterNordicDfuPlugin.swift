@@ -3,13 +3,12 @@ import UIKit
 import iOSDFULibrary
 import CoreBluetooth
 
-public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDelegate, DFUProgressDelegate, LoggerDelegate, CBCentralManagerDelegate {
+public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDelegate, DFUProgressDelegate, LoggerDelegate {
     
     let registrar: FlutterPluginRegistrar
     let channel: FlutterMethodChannel
     var pendingResult: FlutterResult?
     var deviceAddress: String?
-    var centralManager: CBCentralManager?
     
     init(_ registrar: FlutterPluginRegistrar, _ channel: FlutterMethodChannel) {
         self.registrar = registrar
@@ -19,7 +18,6 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "com.timeyaa.flutter_nordic_dfu/method", binaryMessenger: registrar.messenger())
         let instance = SwiftFlutterNordicDfuPlugin(registrar, channel)
-        instance.centralManager = CBCentralManager(delegate: instance, queue: nil)
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
@@ -45,19 +43,13 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
             result(FlutterError(code: "DEVICE_ADDRESS_ERROR", message: "Device address conver to uuid failed", details: "Device uuid \(address) convert to uuid failed"))
             return
         }
-        let peripherals = centralManager!.retrievePeripherals(withIdentifiers: [uuid])
-        
-        if peripherals.count != 1 {
-            result(FlutterError(code: "UNABLE_TO_FIND_DEVICE", message: "Could not find device with deviceAddress", details: nil))
-            return
-        }
         
         guard let firmware = DFUFirmware(urlToZipFile: URL(fileURLWithPath: filePath)) else {
             result(FlutterError(code: "DFU_FIRMWARE_NOT_FOUND", message: "Could not dfu zip file", details: nil))
             return
         }
         
-        let dfuInitiator = DFUServiceInitiator(target:peripherals.first!)
+        let dfuInitiator = DFUServiceInitiator(queue: nil)
             .with(firmware: firmware);
         dfuInitiator.delegate = self
         dfuInitiator.progressDelegate = self
@@ -66,7 +58,7 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
         pendingResult = result
         deviceAddress = address
         
-        _ = dfuInitiator.start()
+        _ = dfuInitiator.start(targetWithIdentifier: uuid)
         print("dfuInitiator have start")
     }
     
@@ -128,10 +120,5 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
     //MARK: - LoggerDelegate
     public func logWith(_ level: LogLevel, message: String) {
         //print("\(level.name()): \(message)")
-    }
-    
-    // MARK: - CBCentralManagerDelegate
-    public func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        
     }
 }
