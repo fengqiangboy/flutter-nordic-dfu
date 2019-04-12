@@ -1,3 +1,10 @@
+## 0.5.0+2
+* fix pod bug
+
+## 0.5.0
+* change dfu iOS dependens version
+* this version has bug, do not use
+
 ## 0.4.0
 * migrate to android x
 
