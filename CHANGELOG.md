@@ -1,3 +1,6 @@
+## 1.0.0
+Add DefaultDfuProgressListenerAdapter
+
 ## 0.5.0+2
 * fix pod bug
 
