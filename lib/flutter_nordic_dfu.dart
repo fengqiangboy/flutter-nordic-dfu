@@ -12,10 +12,9 @@ class FlutterNordicDfu {
   /// [address] android: mac address iOS: device uuid
   /// [filePath] zip file path
   /// [name] device name
-  /// [progressListener] Dfu progress listener
+  /// [progressListener] Dfu progress listener, You can use [DefaultDfuProgressListenerAdapter]
   static Future<String> startDfu(String address, String filePath,
-      {String name,
-      DfuProgressListenerAdapter progressListener}) async {
+      {String name, DfuProgressListenerAdapter progressListener}) async {
     _channel.setMethodCallHandler((MethodCall call) {
       switch (call.method) {
         case "onDeviceConnected":
@@ -105,4 +104,178 @@ abstract class DfuProgressListenerAdapter {
 
   void onProgressChanged(String deviceAddress, int percent, double speed,
       double avgSpeed, int currentPart, int partsTotal) {}
+}
+
+class DefaultDfuProgressListenerAdapter extends DfuProgressListenerAdapter {
+  void Function(String deviceAddress) onDeviceConnectedHandle;
+
+  void Function(String deviceAddress) onDeviceConnectingHandle;
+
+  void Function(String deviceAddress) onDeviceDisconnectedHandle;
+
+  void Function(String deviceAddress) onDeviceDisconnectingHandle;
+
+  void Function(String deviceAddress) onDfuAbortedHandle;
+
+  void Function(String deviceAddress) onDfuCompletedHandle;
+
+  void Function(String deviceAddress) onDfuProcessStartedHandle;
+
+  void Function(String deviceAddress) onDfuProcessStartingHandle;
+
+  void Function(String deviceAddress) onEnablingDfuModeHandle;
+
+  void Function(String deviceAddress) onFirmwareValidatingHandle;
+
+  void Function(String deviceAddress, int error, int errorType, String message)
+      onErrorHandle;
+
+  void Function(String deviceAddress, int percent, double speed,
+      double avgSpeed, int currentPart, int partsTotal) onProgressChangedHandle;
+
+  DefaultDfuProgressListenerAdapter({
+    this.onDeviceConnectedHandle,
+    this.onDeviceConnectingHandle,
+    this.onDeviceDisconnectedHandle,
+    this.onDeviceDisconnectingHandle,
+    this.onDfuAbortedHandle,
+    this.onDfuCompletedHandle,
+    this.onDfuProcessStartedHandle,
+    this.onDfuProcessStartingHandle,
+    this.onEnablingDfuModeHandle,
+    this.onFirmwareValidatingHandle,
+    this.onErrorHandle,
+    this.onProgressChangedHandle,
+  });
+
+  @override
+  void onDeviceConnected(String deviceAddress) {
+    super.onDeviceConnected(deviceAddress);
+    if (onDeviceConnectedHandle != null) {
+      onDeviceConnectedHandle(deviceAddress);
+    }
+  }
+
+  @override
+  void onDeviceConnecting(String deviceAddress) {
+    super.onDeviceConnecting(deviceAddress);
+    if (onDeviceConnectingHandle != null) {
+      onDeviceConnectingHandle(deviceAddress);
+    }
+  }
+
+  @override
+  void onDeviceDisconnected(String deviceAddress) {
+    super.onDeviceDisconnected(deviceAddress);
+    if (onDeviceDisconnectedHandle != null) {
+      onDeviceDisconnectedHandle(deviceAddress);
+    }
+  }
+
+  @override
+  void onDeviceDisconnecting(String deviceAddress) {
+    super.onDeviceDisconnecting(deviceAddress);
+    if (onDeviceDisconnectingHandle != null) {
+      onDeviceDisconnectingHandle(deviceAddress);
+    }
+  }
+
+  @override
+  void onDfuAborted(String deviceAddress) {
+    super.onDfuAborted(deviceAddress);
+    if (onDfuAbortedHandle != null) {
+      onDfuAbortedHandle(deviceAddress);
+    }
+  }
+
+  @override
+  void onDfuCompleted(String deviceAddress) {
+    super.onDfuCompleted(deviceAddress);
+    if (onDfuCompletedHandle != null) {
+      onDfuCompletedHandle(deviceAddress);
+    }
+  }
+
+  @override
+  void onDfuProcessStarted(String deviceAddress) {
+    super.onDfuProcessStarted(deviceAddress);
+    if (onDfuProcessStartedHandle != null) {
+      onDfuProcessStartedHandle(deviceAddress);
+    }
+  }
+
+  @override
+  void onDfuProcessStarting(String deviceAddress) {
+    super.onDfuProcessStarting(deviceAddress);
+    if (onDfuProcessStartingHandle != null) {
+      onDfuProcessStartingHandle(deviceAddress);
+    }
+  }
+
+  @override
+  void onEnablingDfuMode(String deviceAddress) {
+    super.onEnablingDfuMode(deviceAddress);
+    if (onEnablingDfuModeHandle != null) {
+      onEnablingDfuModeHandle(deviceAddress);
+    }
+  }
+
+  @override
+  void onFirmwareValidating(String deviceAddress) {
+    super.onFirmwareValidating(deviceAddress);
+    if (onFirmwareValidatingHandle != null) {
+      onFirmwareValidatingHandle(deviceAddress);
+    }
+  }
+
+  @override
+  void onError(
+    String deviceAddress,
+    int error,
+    int errorType,
+    String message,
+  ) {
+    super.onError(
+      deviceAddress,
+      error,
+      errorType,
+      message,
+    );
+    if (onErrorHandle != null) {
+      onErrorHandle(
+        deviceAddress,
+        error,
+        errorType,
+        message,
+      );
+    }
+  }
+
+  void onProgressChanged(
+    String deviceAddress,
+    int percent,
+    double speed,
+    double avgSpeed,
+    int currentPart,
+    int partsTotal,
+  ) {
+    super.onProgressChanged(
+      deviceAddress,
+      percent,
+      speed,
+      avgSpeed,
+      currentPart,
+      partsTotal,
+    );
+    if (onProgressChangedHandle != null) {
+      onProgressChangedHandle(
+        deviceAddress,
+        percent,
+        speed,
+        avgSpeed,
+        currentPart,
+        partsTotal,
+      );
+    }
+  }
 }
