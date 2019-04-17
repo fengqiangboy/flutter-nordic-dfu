@@ -1,3 +1,6 @@
+## 1.1.0
+Convert android kotlin code to java
+
 ## 1.0.0
 Add DefaultDfuProgressListenerAdapter
 
