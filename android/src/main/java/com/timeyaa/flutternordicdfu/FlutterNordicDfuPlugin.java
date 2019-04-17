@@ -5,6 +5,7 @@ import android.content.Context;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -39,9 +40,9 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
 
     private DfuServiceController controller;
 
-    public FlutterNordicDfuPlugin(Registrar registrar) {
+    private FlutterNordicDfuPlugin(Registrar registrar) {
         this.mContext = registrar.context();
-        this.channel = new MethodChannel(registrar.messenger(), "$NAMESPACE/method");
+        this.channel = new MethodChannel(registrar.messenger(), NAMESPACE + "/method");
         channel.setMethodCallHandler(this);
     }
 
@@ -88,30 +89,30 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
 
     private DfuProgressListenerAdapter mDfuProgressListener = new DfuProgressListenerAdapter() {
         @Override
-        public void onDeviceConnected(String deviceAddress) {
+        public void onDeviceConnected(@NonNull String deviceAddress) {
             super.onDeviceConnected(deviceAddress);
             channel.invokeMethod("onDeviceConnected", deviceAddress);
         }
 
         @Override
-        public void onError(String deviceAddress, int error, int errorType, String message) {
+        public void onError(@NonNull String deviceAddress, int error, int errorType, String message) {
             super.onError(deviceAddress, error, errorType, message);
             channel.invokeMethod("onError", deviceAddress);
 
             if (pendingResult != null) {
-                pendingResult.error("2", "DFU FAILED", "device address: $deviceAddress");
+                pendingResult.error("2", "DFU FAILED", "device address: " + deviceAddress);
                 pendingResult = null;
             }
         }
 
         @Override
-        public void onDeviceConnecting(String deviceAddress) {
+        public void onDeviceConnecting(@NonNull String deviceAddress) {
             super.onDeviceConnecting(deviceAddress);
             channel.invokeMethod("onDeviceConnecting", deviceAddress);
         }
 
         @Override
-        public void onDeviceDisconnected(String deviceAddress) {
+        public void onDeviceDisconnected(@NonNull String deviceAddress) {
             super.onDeviceDisconnected(deviceAddress);
             channel.invokeMethod("onDeviceDisconnected", deviceAddress);
         }
@@ -123,11 +124,11 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
         }
 
         @Override
-        public void onDfuAborted(String deviceAddress) {
+        public void onDfuAborted(@NonNull String deviceAddress) {
             super.onDfuAborted(deviceAddress);
 
             if (pendingResult != null) {
-                pendingResult.error("2", "DFU ABORTED", "device address: $deviceAddress");
+                pendingResult.error("2", "DFU ABORTED", "device address: " + deviceAddress);
                 pendingResult = null;
             }
 
@@ -136,7 +137,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
         }
 
         @Override
-        public void onDfuCompleted(String deviceAddress) {
+        public void onDfuCompleted(@NonNull String deviceAddress) {
             super.onDfuCompleted(deviceAddress);
 
             if (pendingResult != null) {
@@ -149,31 +150,31 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
         }
 
         @Override
-        public void onDfuProcessStarted(String deviceAddress) {
+        public void onDfuProcessStarted(@NonNull String deviceAddress) {
             super.onDfuProcessStarted(deviceAddress);
             channel.invokeMethod("onDfuProcessStarted", deviceAddress);
         }
 
         @Override
-        public void onDfuProcessStarting(String deviceAddress) {
+        public void onDfuProcessStarting(@NonNull String deviceAddress) {
             super.onDfuProcessStarting(deviceAddress);
             channel.invokeMethod("onDfuProcessStarting", deviceAddress);
         }
 
         @Override
-        public void onEnablingDfuMode(String deviceAddress) {
+        public void onEnablingDfuMode(@NonNull String deviceAddress) {
             super.onEnablingDfuMode(deviceAddress);
             channel.invokeMethod("onEnablingDfuMode", deviceAddress);
         }
 
         @Override
-        public void onFirmwareValidating(String deviceAddress) {
+        public void onFirmwareValidating(@NonNull String deviceAddress) {
             super.onFirmwareValidating(deviceAddress);
             channel.invokeMethod("onFirmwareValidating", deviceAddress);
         }
 
         @Override
-        public void onProgressChanged(String deviceAddress, final int percent, final float speed, final float avgSpeed, final int currentPart, final int partsTotal) {
+        public void onProgressChanged(@NonNull final String deviceAddress, final int percent, final float speed, final float avgSpeed, final int currentPart, final int partsTotal) {
             super.onProgressChanged(deviceAddress, percent, speed, avgSpeed, currentPart, partsTotal);
 
             Map<String, Object> paras = new HashMap<String, Object>() {{
@@ -182,11 +183,8 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
                 put("avgSpeed", avgSpeed);
                 put("currentPart", currentPart);
                 put("partsTotal", partsTotal);
+                put("deviceAddress", deviceAddress);
             }};
-
-            if (deviceAddress != null) {
-                paras.put("deviceAddress", deviceAddress);
-            }
 
             channel.invokeMethod("onProgressChanged", paras);
         }
