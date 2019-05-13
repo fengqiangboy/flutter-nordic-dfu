@@ -1,3 +1,6 @@
+## 1.2.0
+Update iOS dependce to 4.4.2
+
 ## 1.1.0
 Convert android kotlin code to java
 
