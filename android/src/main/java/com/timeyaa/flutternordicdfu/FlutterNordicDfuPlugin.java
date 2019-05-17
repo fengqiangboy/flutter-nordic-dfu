@@ -148,6 +148,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
         if (startAsForegroundService == null || startAsForegroundService) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !hasCreateNotification) {
                 DfuServiceInitiator.createDfuNotificationChannel(mContext);
+                hasCreateNotification = true;
             }
         }
 
