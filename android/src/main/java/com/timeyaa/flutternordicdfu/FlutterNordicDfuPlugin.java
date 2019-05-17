@@ -75,17 +75,14 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
             Boolean fileInAsset = call.argument("fileInAsset");
             Boolean forceDfu = call.argument("forceDfu");
             Boolean enableUnsafeExperimentalButtonlessServiceInSecureDfu = call.argument("enableUnsafeExperimentalButtonlessServiceInSecureDfu");
+            Boolean disableNotification = call.argument("disableNotification");
+            Boolean keepBond = call.argument("keepBond");
+            Boolean packetReceiptNotificationsEnabled = call.argument("packetReceiptNotificationsEnabled");
+            Boolean restoreBond = call.argument("restoreBond");
+            Boolean startAsForegroundService = call.argument("startAsForegroundService");
 
             if (fileInAsset == null) {
                 fileInAsset = false;
-            }
-
-            if (forceDfu == null) {
-                forceDfu = false;
-            }
-
-            if (enableUnsafeExperimentalButtonlessServiceInSecureDfu == null) {
-                enableUnsafeExperimentalButtonlessServiceInSecureDfu = false;
             }
 
             if (address == null || filePath == null) {
@@ -104,7 +101,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
             }
 
             pendingResult = result;
-            startDfu(address, name, filePath, forceDfu, enableUnsafeExperimentalButtonlessServiceInSecureDfu, result);
+            startDfu(address, name, filePath, forceDfu, enableUnsafeExperimentalButtonlessServiceInSecureDfu, disableNotification, keepBond, packetReceiptNotificationsEnabled, restoreBond, startAsForegroundService, result);
         } else {
             result.notImplemented();
         }
@@ -113,7 +110,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
     /**
      * Start Dfu
      */
-    private void startDfu(String address, @Nullable String name, String filePath, boolean forceDfu, boolean enableUnsafeExperimentalButtonlessServiceInSecureDfu, Result result) {
+    private void startDfu(String address, @Nullable String name, String filePath, Boolean forceDfu, Boolean enableUnsafeExperimentalButtonlessServiceInSecureDfu, Boolean disableNotification, Boolean keepBond, Boolean packetReceiptNotificationsEnabled, Boolean restoreBond, Boolean startAsForegroundService, Result result) {
         DfuServiceInitiator starter = new DfuServiceInitiator(address)
                 .setZip(filePath)
                 .setKeepBond(true);
@@ -123,8 +120,34 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
 
         pendingResult = result;
 
-        starter.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(enableUnsafeExperimentalButtonlessServiceInSecureDfu);
-        starter.setForceDfu(forceDfu);
+        if (enableUnsafeExperimentalButtonlessServiceInSecureDfu != null) {
+            starter.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(enableUnsafeExperimentalButtonlessServiceInSecureDfu);
+        }
+
+        if (forceDfu != null) {
+            starter.setForceDfu(forceDfu);
+        }
+
+        if (disableNotification != null) {
+            starter.setDisableNotification(disableNotification);
+        }
+
+        if (startAsForegroundService != null) {
+            starter.setForeground(startAsForegroundService);
+        }
+
+        if (keepBond != null) {
+            starter.setKeepBond(keepBond);
+        }
+
+        if (restoreBond != null) {
+            starter.setRestoreBond(restoreBond);
+        }
+
+        if (packetReceiptNotificationsEnabled != null) {
+            starter.setPacketsReceiptNotificationsEnabled(packetReceiptNotificationsEnabled);
+        }
+
         controller = starter.start(mContext, DfuService.class);
     }
 
