@@ -34,9 +34,9 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
                     return
             }
             
-            let forceDfu = (arguements["forceDfu"] as? Bool) ?? false
+            let forceDfu = arguements["forceDfu"] as? Bool
             
-            let enableUnsafeExperimentalButtonlessServiceInSecureDfu = (arguements["enableUnsafeExperimentalButtonlessServiceInSecureDfu"] as? Bool) ?? false
+            let enableUnsafeExperimentalButtonlessServiceInSecureDfu = arguements["enableUnsafeExperimentalButtonlessServiceInSecureDfu"] as? Bool
             
             let fileInAsset = (arguements["fileInAsset"] as? Bool) ?? false
             
@@ -63,8 +63,8 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
         _ address: String,
         name: String?,
         filePath: String,
-        forceDfu: Bool,
-        enableUnsafeExperimentalButtonlessServiceInSecureDfu: Bool,
+        forceDfu: Bool?,
+        enableUnsafeExperimentalButtonlessServiceInSecureDfu: Bool?,
         result: @escaping FlutterResult) {
         guard let uuid = UUID(uuidString: address) else {
             result(FlutterError(code: "DEVICE_ADDRESS_ERROR", message: "Device address conver to uuid failed", details: "Device uuid \(address) convert to uuid failed"))
@@ -81,8 +81,15 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
         dfuInitiator.delegate = self
         dfuInitiator.progressDelegate = self
         dfuInitiator.logger = self
-        dfuInitiator.enableUnsafeExperimentalButtonlessServiceInSecureDfu = enableUnsafeExperimentalButtonlessServiceInSecureDfu
-        dfuInitiator.forceDfu = forceDfu
+        
+        if let enableUnsafeExperimentalButtonlessServiceInSecureDfu = enableUnsafeExperimentalButtonlessServiceInSecureDfu {
+            dfuInitiator.enableUnsafeExperimentalButtonlessServiceInSecureDfu = enableUnsafeExperimentalButtonlessServiceInSecureDfu
+        }
+        
+        if let forceDfu = forceDfu {
+            dfuInitiator.forceDfu = forceDfu
+        }
+        
         pendingResult = result
         deviceAddress = address
         
