@@ -1,6 +1,7 @@
 package com.timeyaa.flutternordicdfu;
 
 import android.content.Context;
+import android.os.Build;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +47,8 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
     private MethodChannel channel;
 
     private DfuServiceController controller;
+
+    private boolean hasCreateNotification = false;
 
     private FlutterNordicDfuPlugin(Registrar registrar) {
         this.mContext = registrar.context();
@@ -139,6 +142,13 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
 
         if (packetReceiptNotificationsEnabled != null) {
             starter.setPacketsReceiptNotificationsEnabled(packetReceiptNotificationsEnabled);
+        }
+
+        // fix notification on android 8 and above
+        if (startAsForegroundService == null || startAsForegroundService) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !hasCreateNotification) {
+                DfuServiceInitiator.createDfuNotificationChannel(mContext);
+            }
         }
 
         controller = starter.start(mContext, DfuService.class);
