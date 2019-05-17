@@ -73,9 +73,19 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
             String name = call.argument("name");
             String filePath = call.argument("filePath");
             Boolean fileInAsset = call.argument("fileInAsset");
+            Boolean forceDfu = call.argument("forceDfu");
+            Boolean enableUnsafeExperimentalButtonlessServiceInSecureDfu = call.argument("enableUnsafeExperimentalButtonlessServiceInSecureDfu");
 
             if (fileInAsset == null) {
                 fileInAsset = false;
+            }
+
+            if (forceDfu == null) {
+                forceDfu = false;
+            }
+
+            if (enableUnsafeExperimentalButtonlessServiceInSecureDfu == null) {
+                enableUnsafeExperimentalButtonlessServiceInSecureDfu = false;
             }
 
             if (address == null || filePath == null) {
@@ -94,7 +104,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
             }
 
             pendingResult = result;
-            startDfu(address, name, filePath, result);
+            startDfu(address, name, filePath, forceDfu, enableUnsafeExperimentalButtonlessServiceInSecureDfu, result);
         } else {
             result.notImplemented();
         }
@@ -103,7 +113,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
     /**
      * Start Dfu
      */
-    private void startDfu(String address, @Nullable String name, String filePath, Result result) {
+    private void startDfu(String address, @Nullable String name, String filePath, boolean forceDfu, boolean enableUnsafeExperimentalButtonlessServiceInSecureDfu, Result result) {
         DfuServiceInitiator starter = new DfuServiceInitiator(address)
                 .setZip(filePath)
                 .setKeepBond(true);
@@ -113,7 +123,8 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
 
         pendingResult = result;
 
-        starter.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true);
+        starter.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(enableUnsafeExperimentalButtonlessServiceInSecureDfu);
+        starter.setForceDfu(forceDfu);
         controller = starter.start(mContext, DfuService.class);
     }
 
