@@ -2,11 +2,20 @@ package com.timeyaa.flutternordicdfu;
 
 import android.content.Context;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -29,6 +38,11 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
     private Context mContext;
 
     /**
+     * hold Registrar
+     */
+    private Registrar registrar;
+
+    /**
      * hold result
      */
     private Result pendingResult;
@@ -43,6 +57,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
     private FlutterNordicDfuPlugin(Registrar registrar) {
         this.mContext = registrar.context();
         this.channel = new MethodChannel(registrar.messenger(), NAMESPACE + "/method");
+        this.registrar = registrar;
         channel.setMethodCallHandler(this);
     }
 
@@ -57,10 +72,25 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
             String address = call.argument("address");
             String name = call.argument("name");
             String filePath = call.argument("filePath");
+            Boolean fileInAsset = call.argument("fileInAsset");
+
+            if (fileInAsset == null) {
+                fileInAsset = false;
+            }
 
             if (address == null || filePath == null) {
                 result.error("Abnormal parameter", "address and filePath are required", null);
                 return;
+            }
+
+            if (fileInAsset) {
+                filePath = registrar.lookupKeyForAsset(filePath);
+                String tempFileName = PathUtils.getExternalAppCachePath(mContext)
+                        + UUID.randomUUID().toString();
+                // copy asset file to temp path
+                ResourceUtils.copyFileFromAssets(filePath, tempFileName, mContext);
+                // now, the path is an absolute path, and can pass it to nordic dfu libarary
+                filePath = tempFileName;
             }
 
             pendingResult = result;
@@ -189,5 +219,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
             channel.invokeMethod("onProgressChanged", paras);
         }
     };
+
+
 }
 
