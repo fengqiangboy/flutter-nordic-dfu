@@ -1,14 +1,19 @@
+## 2.1.0
+* Fix android 8+ notification error
+* Add some android parameter to dfu lib
+* Add forceDfu parameter to dfu lib
+
 ## 2.0.0
-Add asset file support
+* Add asset file support
 
 ## 1.2.0
-Update iOS dependce to 4.4.2
+* Update iOS dependce to 4.4.2
 
 ## 1.1.0
-Convert android kotlin code to java
+* Convert android kotlin code to java
 
 ## 1.0.0
-Add DefaultDfuProgressListenerAdapter
+* Add DefaultDfuProgressListenerAdapter
 
 ## 0.5.0+2
 * fix pod bug
