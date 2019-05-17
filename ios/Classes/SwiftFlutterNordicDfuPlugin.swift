@@ -34,6 +34,10 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
                     return
             }
             
+            let forceDfu = (arguements["forceDfu"] as? Bool) ?? false
+            
+            let enableUnsafeExperimentalButtonlessServiceInSecureDfu = (arguements["enableUnsafeExperimentalButtonlessServiceInSecureDfu"] as? Bool) ?? false
+            
             let fileInAsset = (arguements["fileInAsset"] as? Bool) ?? false
             
             if (fileInAsset) {
@@ -46,11 +50,22 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
                 filePath = pathInAsset
             }
             
-            startDfu(address, name: name, filePath: filePath, result: result)
+            startDfu(address,
+                     name: name,
+                     filePath: filePath,
+                     forceDfu: forceDfu,
+                     enableUnsafeExperimentalButtonlessServiceInSecureDfu: enableUnsafeExperimentalButtonlessServiceInSecureDfu,
+                     result: result)
         }
     }
     
-    private func startDfu(_ address: String, name: String?, filePath: String, result: @escaping FlutterResult) {
+    private func startDfu(
+        _ address: String,
+        name: String?,
+        filePath: String,
+        forceDfu: Bool,
+        enableUnsafeExperimentalButtonlessServiceInSecureDfu: Bool,
+        result: @escaping FlutterResult) {
         guard let uuid = UUID(uuidString: address) else {
             result(FlutterError(code: "DEVICE_ADDRESS_ERROR", message: "Device address conver to uuid failed", details: "Device uuid \(address) convert to uuid failed"))
             return
@@ -66,7 +81,8 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
         dfuInitiator.delegate = self
         dfuInitiator.progressDelegate = self
         dfuInitiator.logger = self
-        dfuInitiator.enableUnsafeExperimentalButtonlessServiceInSecureDfu = true
+        dfuInitiator.enableUnsafeExperimentalButtonlessServiceInSecureDfu = enableUnsafeExperimentalButtonlessServiceInSecureDfu
+        dfuInitiator.forceDfu = forceDfu
         pendingResult = result
         deviceAddress = address
         
