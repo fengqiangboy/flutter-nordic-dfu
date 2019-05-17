@@ -81,6 +81,7 @@ class FlutterNordicDfu {
         const AndroidSpecialParameter(),
   }) async {
     assert(address != null, "address can not be null");
+    assert(filePath != null, "file can not be null");
 
     _channel.setMethodCallHandler((MethodCall call) {
       switch (call.method) {
@@ -145,6 +146,14 @@ class FlutterNordicDfu {
       'forceDfu': forceDfu,
       'enableUnsafeExperimentalButtonlessServiceInSecureDfu':
           enableUnsafeExperimentalButtonlessServiceInSecureDfu,
+      'disableNotification': androidSpecialParameter?.disableNotification,
+      'keepBond': androidSpecialParameter?.keepBond,
+      'restoreBond': androidSpecialParameter?.restoreBond,
+      'packetReceiptNotificationsEnabled':
+          androidSpecialParameter?.packetReceiptNotificationsEnabled,
+      'restoreBond': androidSpecialParameter?.restoreBond,
+      'startAsForegroundService':
+          androidSpecialParameter?.startAsForegroundService,
     });
   }
 }
