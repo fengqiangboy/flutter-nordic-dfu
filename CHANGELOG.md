@@ -1,3 +1,6 @@
+## 2.0.0
+Add asset file support
+
 ## 1.2.0
 Update iOS dependce to 4.4.2
 

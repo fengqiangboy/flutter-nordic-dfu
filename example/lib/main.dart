@@ -19,7 +19,17 @@ class _MyAppState extends State<MyApp> {
       'C0:D0:59:F1:A8:3F',
       'assets/file.zip',
       fileInAsset: true,
-      progressListener: ProgressListenerListener(),
+      progressListener:
+          DefaultDfuProgressListenerAdapter(onProgressChangedHandle: (
+        deviceAddress,
+        percent,
+        speed,
+        avgSpeed,
+        currentPart,
+        partsTotal,
+      ) {
+        print('deviceAddress: $deviceAddress, percent: $percent');
+      }),
     );
     print(s);
   }

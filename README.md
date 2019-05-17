@@ -14,10 +14,56 @@ For more info about the DFU process, see: [Resources](#resources)
 
 #### Examples
 
+You can pass a absolute file path or asset file to `FlutterNordicDfu`
+
+##### Use absolute file path
+
 ```dart
+/// You can define your ProgressListenerListener
 await FlutterNordicDfu.startDfu(
-        'EB:75:AD:E3:CA:CF', 'file/to/zip/path/file.zip',
-         progressListener: ProgressListenerListener());
+            'EB:75:AD:E3:CA:CF', '/file/to/zip/path/file.zip',
+            progressListener: ProgressListenerListener(),
+         );
+
+
+class ProgressListenerListener extends DfuProgressListenerAdapter {
+  @override
+  void onProgressChanged(String deviceAddress, int percent, double speed,
+      double avgSpeed, int currentPart, int partsTotal) {
+    super.onProgressChanged(
+        deviceAddress, percent, speed, avgSpeed, currentPart, partsTotal);
+    print('deviceAddress: $deviceAddress, percent: $percent');
+  }
+}
+
+/// Or you can use DefaultDfuProgressListenerAdapter
+await FlutterNordicDfu.startDfu(
+      '/file/to/zip/path/file.zip',
+      'assets/file.zip',
+      fileInAsset: true,
+      progressListener:
+          DefaultDfuProgressListenerAdapter(onProgressChangedHandle: (
+        deviceAddress,
+        percent,
+        speed,
+        avgSpeed,
+        currentPart,
+        partsTotal,
+      ) {
+        print('deviceAddress: $deviceAddress, percent: $percent');
+      }),
+    );
+```
+
+##### Use asset file path
+
+```dart
+/// just set [fileInAsset] true
+await FlutterNordicDfu.startDfu(
+            'EB:75:AD:E3:CA:CF', 'assets/file.zip',
+            progressListener: ProgressListenerListener(),
+            fileInAsset: true,
+         );
 
 class ProgressListenerListener extends DfuProgressListenerAdapter {
   @override
