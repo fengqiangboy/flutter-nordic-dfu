@@ -16,8 +16,8 @@ class _MyAppState extends State<MyApp> {
 
   void test() async {
     var s = await FlutterNordicDfu.startDfu(
-      'EB:75:AD:E3:CA:CF',
-      'assets/318_nrf52810_190116_3L.zip',
+      'C0:D0:59:F1:A8:3F',
+      'assets/file.zip',
       fileInAsset: true,
       progressListener: ProgressListenerListener(),
     );
