@@ -29,9 +29,21 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
             }
             let name = arguements["name"] as? String
             guard let address = arguements["address"] as? String,
-                let filePath = arguements["filePath"] as? String else {
+                var filePath = arguements["filePath"] as? String else {
                     result(FlutterError(code: "ABNORMAL_PARAMETER", message: "address and filePath are required", details: nil))
                     return
+            }
+            
+            let fileInAsset = (arguements["fileInAsset"] as? Bool) ?? false
+            
+            if (fileInAsset) {
+                let key = registrar.lookupKey(forAsset: filePath)
+                guard let pathInAsset = Bundle.main.path(forResource: key, ofType: nil) else {
+                    result(FlutterError(code: "ABNORMAL_PARAMETER", message: "file in asset not found \(filePath)", details: nil))
+                    return
+                }
+                
+                filePath = pathInAsset
             }
             
             startDfu(address, name: name, filePath: filePath, result: result)
