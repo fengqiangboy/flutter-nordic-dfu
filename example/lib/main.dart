@@ -14,6 +14,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final FlutterBlue flutterBlue = FlutterBlue.instance;
   StreamSubscription<ScanResult> scanSubscription;
+  List<ScanResult> scanResults = <ScanResult>[];
 
   @override
   void initState() {
@@ -42,22 +43,35 @@ class _MyAppState extends State<MyApp> {
 
   void startScan() {
     scanSubscription?.cancel();
-    scanSubscription = null;
-    scanSubscription = flutterBlue.scan().listen((scanResult) {
-      print(scanResult.device.id);
-    });
-    setState(() {});
+    setState(
+      () => scanSubscription = flutterBlue.scan().listen(
+            (scanResult) {
+              if (scanResults.firstWhere(
+                      (ele) => ele.device.id == scanResult.device.id,
+                      orElse: () => null) !=
+                  null) {
+                return;
+              }
+              setState(() {
+                /// add result to results if not added
+                scanResults.add(scanResult);
+              });
+            },
+          ),
+    );
   }
 
   void stopScan() {
     scanSubscription?.cancel();
     scanSubscription = null;
-    setState(() {});
+    setState(() => scanSubscription = null);
   }
 
   @override
   Widget build(BuildContext context) {
     final isScanning = scanSubscription != null;
+    final hasDevice = scanResults.length > 0;
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -74,16 +88,22 @@ class _MyAppState extends State<MyApp> {
                   )
           ],
         ),
-        body: Center(
-          child: RaisedButton(
-            child: Text('Running on'),
-            onPressed: () {
-              test();
-            },
-          ),
-        ),
+        body: !hasDevice
+            ? const Center(
+                child: const Text('No device'),
+              )
+            : ListView.separated(
+                padding: const EdgeInsets.all(8),
+                itemBuilder: _deviceItemBuilder,
+                separatorBuilder: (context, index) => const SizedBox(height: 5),
+                itemCount: scanResults.length,
+              ),
       ),
     );
+  }
+
+  Widget _deviceItemBuilder(BuildContext context, int index) {
+    return DeviceItem(scanResults[index]);
   }
 }
 
@@ -94,5 +114,39 @@ class ProgressListenerListener extends DfuProgressListenerAdapter {
     super.onProgressChanged(
         deviceAddress, percent, speed, avgSpeed, currentPart, partsTotal);
     print('deviceAddress: $deviceAddress, percent: $percent');
+  }
+}
+
+class DeviceItem extends StatelessWidget {
+  final ScanResult scanResult;
+
+  DeviceItem(this.scanResult);
+
+  @override
+  Widget build(BuildContext context) {
+    var name = "Unknow";
+    if (scanResult.device.name != null && scanResult.device.name.length > 0) {
+      name = scanResult.device.name;
+    }
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.bluetooth),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(name),
+                  Text(scanResult.device.id.id),
+                ],
+              ),
+            ),
+            FlatButton(onPressed: () {}, child: Text("Start Dfu"))
+          ],
+        ),
+      ),
+    );
   }
 }
