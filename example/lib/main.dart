@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_nordic_dfu/flutter_nordic_dfu.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 void main() => runApp(MyApp());
 
@@ -9,6 +12,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final FlutterBlue flutterBlue = FlutterBlue.instance;
+  StreamSubscription<ScanResult> scanSubscription;
+
   @override
   void initState() {
     super.initState();
@@ -34,12 +40,39 @@ class _MyAppState extends State<MyApp> {
     print(s);
   }
 
+  void startScan() {
+    scanSubscription?.cancel();
+    scanSubscription = null;
+    scanSubscription = flutterBlue.scan().listen((scanResult) {
+      print(scanResult.device.id);
+    });
+    setState(() {});
+  }
+
+  void stopScan() {
+    scanSubscription?.cancel();
+    scanSubscription = null;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isScanning = scanSubscription != null;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
+          actions: <Widget>[
+            isScanning
+                ? IconButton(
+                    icon: Icon(Icons.pause_circle_filled),
+                    onPressed: stopScan,
+                  )
+                : IconButton(
+                    icon: Icon(Icons.play_arrow),
+                    onPressed: startScan,
+                  )
+          ],
         ),
         body: Center(
           child: RaisedButton(
