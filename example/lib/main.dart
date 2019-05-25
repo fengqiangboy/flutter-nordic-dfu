@@ -15,50 +15,60 @@ class _MyAppState extends State<MyApp> {
   final FlutterBlue flutterBlue = FlutterBlue.instance;
   StreamSubscription<ScanResult> scanSubscription;
   List<ScanResult> scanResults = <ScanResult>[];
+  bool dfuRunning = false;
 
   @override
   void initState() {
     super.initState();
   }
 
-  void test() async {
-    var s = await FlutterNordicDfu.startDfu(
-      'C0:D0:59:F1:A8:3F',
-      'assets/file.zip',
-      fileInAsset: true,
-      progressListener:
-          DefaultDfuProgressListenerAdapter(onProgressChangedHandle: (
-        deviceAddress,
-        percent,
-        speed,
-        avgSpeed,
-        currentPart,
-        partsTotal,
-      ) {
-        print('deviceAddress: $deviceAddress, percent: $percent');
-      }),
-    );
-    print(s);
+  Future<void> doDfu(String deviceId) async {
+    stopScan();
+    dfuRunning = true;
+    try {
+      var s = await FlutterNordicDfu.startDfu(
+        deviceId,
+        'assets/file.zip',
+        fileInAsset: true,
+        progressListener:
+            DefaultDfuProgressListenerAdapter(onProgressChangedHandle: (
+          deviceAddress,
+          percent,
+          speed,
+          avgSpeed,
+          currentPart,
+          partsTotal,
+        ) {
+          print('deviceAddress: $deviceAddress, percent: $percent');
+        }),
+      );
+      print(s);
+      dfuRunning = false;
+    } catch (e) {
+      dfuRunning = false;
+      print(e.toString());
+    }
   }
 
   void startScan() {
     scanSubscription?.cancel();
-    setState(
-      () => scanSubscription = flutterBlue.scan().listen(
-            (scanResult) {
-              if (scanResults.firstWhere(
-                      (ele) => ele.device.id == scanResult.device.id,
-                      orElse: () => null) !=
-                  null) {
-                return;
-              }
-              setState(() {
-                /// add result to results if not added
-                scanResults.add(scanResult);
-              });
-            },
-          ),
-    );
+    setState(() {
+      scanResults.clear();
+      scanSubscription = flutterBlue.scan().listen(
+        (scanResult) {
+          if (scanResults.firstWhere(
+                  (ele) => ele.device.id == scanResult.device.id,
+                  orElse: () => null) !=
+              null) {
+            return;
+          }
+          setState(() {
+            /// add result to results if not added
+            scanResults.add(scanResult);
+          });
+        },
+      );
+    });
   }
 
   void stopScan() {
@@ -80,11 +90,11 @@ class _MyAppState extends State<MyApp> {
             isScanning
                 ? IconButton(
                     icon: Icon(Icons.pause_circle_filled),
-                    onPressed: stopScan,
+                    onPressed: dfuRunning ? null : stopScan,
                   )
                 : IconButton(
                     icon: Icon(Icons.play_arrow),
-                    onPressed: startScan,
+                    onPressed: dfuRunning ? null : startScan,
                   )
           ],
         ),
@@ -103,7 +113,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget _deviceItemBuilder(BuildContext context, int index) {
-    return DeviceItem(scanResults[index]);
+    var result = scanResults[index];
+    return DeviceItem(
+      scanResult: result,
+      onPress: dfuRunning
+          ? null
+          : () async {
+              await this.doDfu(result.device.id.id);
+            },
+    );
   }
 }
 
@@ -120,7 +138,9 @@ class ProgressListenerListener extends DfuProgressListenerAdapter {
 class DeviceItem extends StatelessWidget {
   final ScanResult scanResult;
 
-  DeviceItem(this.scanResult);
+  final VoidCallback onPress;
+
+  DeviceItem({this.scanResult, this.onPress});
 
   @override
   Widget build(BuildContext context) {
@@ -140,10 +160,11 @@ class DeviceItem extends StatelessWidget {
                 children: <Widget>[
                   Text(name),
                   Text(scanResult.device.id.id),
+                  Text("RSSI: ${scanResult.rssi}"),
                 ],
               ),
             ),
-            FlatButton(onPressed: () {}, child: Text("Start Dfu"))
+            FlatButton(onPressed: onPress, child: Text("Start Dfu"))
           ],
         ),
       ),
