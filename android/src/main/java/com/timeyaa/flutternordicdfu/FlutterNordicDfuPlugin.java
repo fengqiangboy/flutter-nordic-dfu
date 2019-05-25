@@ -1,7 +1,9 @@
 package com.timeyaa.flutternordicdfu;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -165,6 +167,8 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
         @Override
         public void onError(@NonNull String deviceAddress, int error, int errorType, String message) {
             super.onError(deviceAddress, error, errorType, message);
+            cancelNotification();
+
             channel.invokeMethod("onError", deviceAddress);
 
             if (pendingResult != null) {
@@ -194,6 +198,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
         @Override
         public void onDfuAborted(@NonNull String deviceAddress) {
             super.onDfuAborted(deviceAddress);
+            cancelNotification();
 
             if (pendingResult != null) {
                 pendingResult.error("2", "DFU ABORTED", "device address: " + deviceAddress);
@@ -207,6 +212,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
         @Override
         public void onDfuCompleted(@NonNull String deviceAddress) {
             super.onDfuCompleted(deviceAddress);
+            cancelNotification();
 
             if (pendingResult != null) {
                 pendingResult.success(deviceAddress);
@@ -258,6 +264,17 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
         }
     };
 
+    private void cancelNotification() {
+        // let's wait a bit until we cancel the notification. When canceled immediately it will be recreated by service again.
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final NotificationManager manager = (NotificationManager) registrar.activity().getSystemService(Context.NOTIFICATION_SERVICE);
+                if (manager != null)
+                    manager.cancel(DfuService.NOTIFICATION_ID);
+            }
+        }, 200);
+    }
 
 }
 
