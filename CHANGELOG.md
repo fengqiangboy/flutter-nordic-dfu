@@ -1,3 +1,7 @@
+## 2.2.0
+* Add example project
+* Cancel notification when dfu complete
+
 ## 2.1.0
 * Fix android 8+ notification error
 * Add some android parameter to dfu lib

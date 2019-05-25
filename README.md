@@ -7,6 +7,16 @@ This is the implementation of the reference "[react-native-nordic-dfu](https://g
 
 For more info about the DFU process, see: [Resources](#resources)
 
+## Run Example
+
+1. Add you dfu zip file to `example/assets/file.zip`
+
+2. Run example project
+
+3. Scan device
+
+4. Start dfu
+
 
 ## Usage
 
