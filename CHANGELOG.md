@@ -1,3 +1,6 @@
+## 2.2.1
+* add android x depend
+
 ## 2.2.0
 * Add example project
 * Cancel notification when dfu complete
