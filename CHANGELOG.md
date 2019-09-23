@@ -1,3 +1,6 @@
+## 2.3.0
+* Update iOS library to 4.5.1
+
 ## 2.2.1
 * add android x depend
 
