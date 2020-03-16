@@ -1,4 +1,7 @@
 ## 2.3.0
+* Update Android library to 1.10.1
+
+## 2.3.0
 * Update iOS library to 4.5.1
 
 ## 2.2.1
