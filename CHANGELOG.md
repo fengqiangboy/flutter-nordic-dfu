@@ -1,4 +1,4 @@
-## 2.3.0
+## 2.4.0
 * Update Android library to 1.10.1
 
 ## 2.3.0
