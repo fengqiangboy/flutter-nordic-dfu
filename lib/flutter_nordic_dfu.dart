@@ -146,6 +146,8 @@ class FlutterNordicDfu {
       'name': name,
       'fileInAsset': fileInAsset,
       'forceDfu': forceDfu,
+      'enablePRNs': enablePRNs,
+      'numberOfPackets': numberOfPackets,
       'enableUnsafeExperimentalButtonlessServiceInSecureDfu':
           enableUnsafeExperimentalButtonlessServiceInSecureDfu,
       'disableNotification': androidSpecialParameter?.disableNotification,
