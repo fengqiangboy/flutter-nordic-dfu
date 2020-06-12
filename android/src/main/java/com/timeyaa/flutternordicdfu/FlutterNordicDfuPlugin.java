@@ -115,9 +115,9 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
         DfuServiceInitiator starter = new DfuServiceInitiator(address)
                 .setZip(filePath)
                 .setKeepBond(true)
-                .setForceDfu(forceDfu)
-                .setPacketsReceiptNotificationsEnabled(enablePRNs)
-                .setPacketsReceiptNotificationsValue(numberOfPackets)
+                .setForceDfu(forceDfu == null ? false:forceDfu)
+                .setPacketsReceiptNotificationsEnabled(enablePRNs == null ? Build.VERSION.SDK_INT < Build.VERSION_CODES.M:enablePRNs)
+                .setPacketsReceiptNotificationsValue(numberOfPackets== null ? -1 :numberOfPackets)
                 .setPrepareDataObjectDelay(400)
                 .setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true);
         if (name != null) {
