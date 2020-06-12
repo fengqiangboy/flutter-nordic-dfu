@@ -9,4 +9,12 @@ public class DfuService extends DfuBaseService {
     protected Class<? extends Activity> getNotificationTarget() {
         return NotificationActivity.class;
     }
+
+    @Override
+    protected boolean isDebug() {
+        // Override this method and return true if you need more logs in LogCat
+        // Note: BuildConfig.DEBUG always returns false in library projects, so please use
+        // your app package BuildConfig
+        return true;
+    }
 }
