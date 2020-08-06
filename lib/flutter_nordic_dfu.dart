@@ -76,6 +76,8 @@ class FlutterNordicDfu {
     DfuProgressListenerAdapter progressListener,
     bool fileInAsset,
     bool forceDfu,
+    bool enablePRNs,
+    int numberOfPackets,
     bool enableUnsafeExperimentalButtonlessServiceInSecureDfu,
     AndroidSpecialParameter androidSpecialParameter =
         const AndroidSpecialParameter(),
@@ -144,6 +146,8 @@ class FlutterNordicDfu {
       'name': name,
       'fileInAsset': fileInAsset,
       'forceDfu': forceDfu,
+      'enablePRNs': enablePRNs,
+      'numberOfPackets': numberOfPackets,
       'enableUnsafeExperimentalButtonlessServiceInSecureDfu':
           enableUnsafeExperimentalButtonlessServiceInSecureDfu,
       'disableNotification': androidSpecialParameter?.disableNotification,

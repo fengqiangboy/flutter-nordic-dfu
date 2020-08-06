@@ -78,6 +78,8 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
             Boolean packetReceiptNotificationsEnabled = call.argument("packetReceiptNotificationsEnabled");
             Boolean restoreBond = call.argument("restoreBond");
             Boolean startAsForegroundService = call.argument("startAsForegroundService");
+            Integer numberOfPackets = call.argument("numberOfPackets");
+            Boolean enablePRNs = call.argument("enablePRNs");
 
             if (fileInAsset == null) {
                 fileInAsset = false;
@@ -99,7 +101,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
             }
 
             pendingResult = result;
-            startDfu(address, name, filePath, forceDfu, enableUnsafeExperimentalButtonlessServiceInSecureDfu, disableNotification, keepBond, packetReceiptNotificationsEnabled, restoreBond, startAsForegroundService, result);
+            startDfu(address, name, filePath, forceDfu, enableUnsafeExperimentalButtonlessServiceInSecureDfu, disableNotification, keepBond, packetReceiptNotificationsEnabled, restoreBond, startAsForegroundService, result,numberOfPackets,enablePRNs);
         } else {
             result.notImplemented();
         }
@@ -108,10 +110,16 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler {
     /**
      * Start Dfu
      */
-    private void startDfu(String address, @Nullable String name, String filePath, Boolean forceDfu, Boolean enableUnsafeExperimentalButtonlessServiceInSecureDfu, Boolean disableNotification, Boolean keepBond, Boolean packetReceiptNotificationsEnabled, Boolean restoreBond, Boolean startAsForegroundService, Result result) {
+    private void startDfu(String address, @Nullable String name, String filePath, Boolean forceDfu, Boolean enableUnsafeExperimentalButtonlessServiceInSecureDfu, Boolean disableNotification, Boolean keepBond, Boolean packetReceiptNotificationsEnabled, Boolean restoreBond, Boolean startAsForegroundService, Result result,Integer numberOfPackets,Boolean enablePRNs) {
+
         DfuServiceInitiator starter = new DfuServiceInitiator(address)
                 .setZip(filePath)
-                .setKeepBond(true);
+                .setKeepBond(true)
+                .setForceDfu(forceDfu == null ? false:forceDfu)
+                .setPacketsReceiptNotificationsEnabled(enablePRNs == null ? Build.VERSION.SDK_INT < Build.VERSION_CODES.M:enablePRNs)
+                .setPacketsReceiptNotificationsValue(numberOfPackets== null ? -1 :numberOfPackets)
+                .setPrepareDataObjectDelay(400)
+                .setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true);
         if (name != null) {
             starter.setDeviceName(name);
         }
