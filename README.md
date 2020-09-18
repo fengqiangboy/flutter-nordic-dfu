@@ -48,7 +48,7 @@ class ProgressListenerListener extends DfuProgressListenerAdapter {
 
 /// Or you can use DefaultDfuProgressListenerAdapter
 await FlutterNordicDfu.startDfu(
-      '/file/to/zip/path/file.zip',
+      'EB:75:AD:E3:CA:CF',
       'assets/file.zip',
       fileInAsset: true,
       progressListener:
