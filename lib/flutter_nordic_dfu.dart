@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-/// Som parameter just use in Android
+/// Some parameter just use in Android
 /// All this parameters can see in <a href="https://github.com/NordicSemiconductor/Android-DFU-Library">
 class AndroidSpecialParameter {
   ///Sets whether the progress notification in the status bar should be disabled.
@@ -53,6 +53,17 @@ class AndroidSpecialParameter {
     this.startAsForegroundService,
   });
 }
+/// Some parameter just use in iOS
+/// All this parameters can see in <a href="https://github.com/NordicSemiconductor/IOS-Pods-DFU-Library">
+class IosSpecialParameter {
+  ///Sets whether to send unique name to device before it is switched into bootloader mode
+  ///Defaults to true.
+  final bool alternativeAdvertisingNameEnabled;
+
+  const IosSpecialParameter({
+    this.alternativeAdvertisingNameEnabled,
+  });
+}
 
 class FlutterNordicDfu {
   static const String NAMESPACE = 'com.timeyaa.flutter_nordic_dfu';
@@ -69,6 +80,7 @@ class FlutterNordicDfu {
   /// [forceDfu] Legacy DFU only, see in nordic libarary, default is false
   /// [enableUnsafeExperimentalButtonlessServiceInSecureDfu] see in nordic libarary, default is false
   /// [androidSpecialParameter] this parameters is only used by android lib
+  /// [iosSpecialParameter] this parameters is only used by ios lib
   static Future<String> startDfu(
     String address,
     String filePath, {
@@ -81,6 +93,8 @@ class FlutterNordicDfu {
     bool enableUnsafeExperimentalButtonlessServiceInSecureDfu,
     AndroidSpecialParameter androidSpecialParameter =
         const AndroidSpecialParameter(),
+    IosSpecialParameter iosSpecialParameter =
+        const IosSpecialParameter(),
   }) async {
     assert(address != null, "address can not be null");
     assert(filePath != null, "file can not be null");
@@ -158,6 +172,8 @@ class FlutterNordicDfu {
       'restoreBond': androidSpecialParameter?.restoreBond,
       'startAsForegroundService':
           androidSpecialParameter?.startAsForegroundService,
+      'alternativeAdvertisingNameEnabled':
+          iosSpecialParameter?.alternativeAdvertisingNameEnabled,
     });
   }
 }
