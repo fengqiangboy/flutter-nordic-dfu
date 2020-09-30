@@ -23,22 +23,22 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if (call.method == "startDfu") {
-            guard let arguements = call.arguments as? Dictionary<String, AnyObject> else {
+            guard let arguments = call.arguments as? Dictionary<String, AnyObject> else {
                 result(FlutterError(code: "ABNORMAL_PARAMETER", message: "no parameters", details: nil))
                 return
             }
-            let name = arguements["name"] as? String
-            guard let address = arguements["address"] as? String,
-                var filePath = arguements["filePath"] as? String else {
+            let name = arguments["name"] as? String
+            guard let address = arguments["address"] as? String,
+                var filePath = arguments["filePath"] as? String else {
                     result(FlutterError(code: "ABNORMAL_PARAMETER", message: "address and filePath are required", details: nil))
                     return
             }
             
-            let forceDfu = arguements["forceDfu"] as? Bool
+            let forceDfu = arguments["forceDfu"] as? Bool
             
-            let enableUnsafeExperimentalButtonlessServiceInSecureDfu = arguements["enableUnsafeExperimentalButtonlessServiceInSecureDfu"] as? Bool
+            let enableUnsafeExperimentalButtonlessServiceInSecureDfu = arguments["enableUnsafeExperimentalButtonlessServiceInSecureDfu"] as? Bool
             
-            let fileInAsset = (arguements["fileInAsset"] as? Bool) ?? false
+            let fileInAsset = (arguments["fileInAsset"] as? Bool) ?? false
             
             if (fileInAsset) {
                 let key = registrar.lookupKey(forAsset: filePath)
@@ -50,11 +50,14 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
                 filePath = pathInAsset
             }
             
+            let alternativeAdvertisingNameEnabled = arguments["alternativeAdvertisingNameEnabled"] as? Bool
+            
             startDfu(address,
                      name: name,
                      filePath: filePath,
                      forceDfu: forceDfu,
                      enableUnsafeExperimentalButtonlessServiceInSecureDfu: enableUnsafeExperimentalButtonlessServiceInSecureDfu,
+                     alternativeAdvertisingNameEnabled: alternativeAdvertisingNameEnabled,
                      result: result)
         }
     }
@@ -65,6 +68,7 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
         filePath: String,
         forceDfu: Bool?,
         enableUnsafeExperimentalButtonlessServiceInSecureDfu: Bool?,
+        alternativeAdvertisingNameEnabled: Bool?,
         result: @escaping FlutterResult) {
         guard let uuid = UUID(uuidString: address) else {
             result(FlutterError(code: "DEVICE_ADDRESS_ERROR", message: "Device address conver to uuid failed", details: "Device uuid \(address) convert to uuid failed"))
@@ -88,6 +92,10 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
         
         if let forceDfu = forceDfu {
             dfuInitiator.forceDfu = forceDfu
+        }
+        
+        if let alternativeAdvertisingNameEnabled = alternativeAdvertisingNameEnabled {
+            dfuInitiator.alternativeAdvertisingNameEnabled = alternativeAdvertisingNameEnabled
         }
         
         pendingResult = result
