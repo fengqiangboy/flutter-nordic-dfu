@@ -9,7 +9,7 @@ For more info about the DFU process, see: [Resources](#resources)
 
 ## Run Example
 
-1. Add you dfu zip file to `example/assets/file.zip`
+1. Add your dfu zip file to `example/assets/file.zip`
 
 2. Run example project
 
@@ -24,7 +24,7 @@ For more info about the DFU process, see: [Resources](#resources)
 
 #### Examples
 
-You can pass a absolute file path or asset file to `FlutterNordicDfu`
+You can pass an absolute file path or asset file to `FlutterNordicDfu`
 
 ##### Use absolute file path
 
