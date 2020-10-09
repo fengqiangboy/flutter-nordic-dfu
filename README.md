@@ -7,7 +7,7 @@ This is the implementation of the reference "[react-native-nordic-dfu](https://g
 
 For more info about the DFU process, see: [Resources](#resources)
 
-## Run Example
+## Run Example-->Amazing 
 
 1. Add you dfu zip file to `example/assets/file.zip`
 
