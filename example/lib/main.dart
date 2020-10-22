@@ -121,11 +121,18 @@ class _MyAppState extends State<MyApp> {
       onPress: dfuRunning
           ? () async {
               await FlutterNordicDfu.abortDfu();
+              setState(() {
+                dfuRunningInx = null;
+              });
             }
           : () async {
-              dfuRunningInx = index;
+              setState(() {
+                dfuRunningInx = index;
+              });
               await this.doDfu(result.device.id.id);
-              dfuRunningInx = null;
+              setState(() {
+                dfuRunningInx = null;
+              });
             },
     );
   }
@@ -172,7 +179,9 @@ class DeviceItem extends StatelessWidget {
                 ],
               ),
             ),
-            FlatButton(onPressed: onPress, child: isRunningItem ? Text("Abort Dfu") : Text("Start Dfu"))
+            FlatButton(
+                onPressed: onPress,
+                child: isRunningItem ? Text("Abort Dfu") : Text("Start Dfu"))
           ],
         ),
       ),
