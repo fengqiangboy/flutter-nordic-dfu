@@ -16,6 +16,7 @@ class _MyAppState extends State<MyApp> {
   StreamSubscription<ScanResult> scanSubscription;
   List<ScanResult> scanResults = <ScanResult>[];
   bool dfuRunning = false;
+  int dfuRunningInx;
 
   @override
   void initState() {
@@ -115,11 +116,16 @@ class _MyAppState extends State<MyApp> {
   Widget _deviceItemBuilder(BuildContext context, int index) {
     var result = scanResults[index];
     return DeviceItem(
+      isRunningItem: (dfuRunningInx == null ? false : dfuRunningInx == index),
       scanResult: result,
       onPress: dfuRunning
-          ? null
+          ? () async {
+              await FlutterNordicDfu.abortDfu();
+            }
           : () async {
+              dfuRunningInx = index;
               await this.doDfu(result.device.id.id);
+              dfuRunningInx = null;
             },
     );
   }
@@ -140,7 +146,9 @@ class DeviceItem extends StatelessWidget {
 
   final VoidCallback onPress;
 
-  DeviceItem({this.scanResult, this.onPress});
+  final bool isRunningItem;
+
+  DeviceItem({this.scanResult, this.onPress, this.isRunningItem});
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +172,7 @@ class DeviceItem extends StatelessWidget {
                 ],
               ),
             ),
-            FlatButton(onPressed: onPress, child: Text("Start Dfu"))
+            FlatButton(onPressed: onPress, child: isRunningItem ? Text("Abort Dfu") : Text("Start Dfu"))
           ],
         ),
       ),
