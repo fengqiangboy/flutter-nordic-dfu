@@ -53,6 +53,7 @@ class AndroidSpecialParameter {
     this.startAsForegroundService,
   });
 }
+
 /// Some parameter just use in iOS
 /// All this parameters can see in <a href="https://github.com/NordicSemiconductor/IOS-Pods-DFU-Library">
 class IosSpecialParameter {
@@ -93,8 +94,7 @@ class FlutterNordicDfu {
     bool enableUnsafeExperimentalButtonlessServiceInSecureDfu,
     AndroidSpecialParameter androidSpecialParameter =
         const AndroidSpecialParameter(),
-    IosSpecialParameter iosSpecialParameter =
-        const IosSpecialParameter(),
+    IosSpecialParameter iosSpecialParameter = const IosSpecialParameter(),
   }) async {
     assert(address != null, "address can not be null");
     assert(filePath != null, "file can not be null");
@@ -175,6 +175,10 @@ class FlutterNordicDfu {
       'alternativeAdvertisingNameEnabled':
           iosSpecialParameter?.alternativeAdvertisingNameEnabled,
     });
+  }
+
+  static Future<String> abortDfu() async {
+    return await _channel.invokeMethod('abortDfu');
   }
 }
 

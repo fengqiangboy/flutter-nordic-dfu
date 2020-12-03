@@ -16,7 +16,7 @@ A new flutter plugin project.
   s.public_header_files = 'Classes/**/*.h'
   s.swift_version    = '5.0'
   s.dependency 'Flutter'
-  s.dependency 'iOSDFULibrary', '~> 4.5.1'
+  s.dependency 'iOSDFULibrary', '~> 4.9.0'
 
   s.ios.deployment_target = '9.0'
 end
