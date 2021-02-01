@@ -169,7 +169,6 @@ class FlutterNordicDfu {
       'restoreBond': androidSpecialParameter?.restoreBond,
       'packetReceiptNotificationsEnabled':
           androidSpecialParameter?.packetReceiptNotificationsEnabled,
-      'restoreBond': androidSpecialParameter?.restoreBond,
       'startAsForegroundService':
           androidSpecialParameter?.startAsForegroundService,
       'alternativeAdvertisingNameEnabled':
