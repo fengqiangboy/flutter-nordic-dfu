@@ -61,8 +61,12 @@ class IosSpecialParameter {
   ///Defaults to true.
   final bool alternativeAdvertisingNameEnabled;
 
+  ///Defaults to false
+  final bool forceScanningForNewAddressInLegacyDfu;
+
   const IosSpecialParameter({
     this.alternativeAdvertisingNameEnabled,
+    this.forceScanningForNewAddressInLegacyDfu = false,
   });
 }
 

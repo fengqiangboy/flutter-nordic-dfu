@@ -52,11 +52,20 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
             }
             
             let alternativeAdvertisingNameEnabled = arguments["alternativeAdvertisingNameEnabled"] as? Bool
+
+            let forceScanningForNewAddressInLegacyDfu = (arguments["forceScanningForNewAddressInLegacyDfu"] as? Bool) ?? false
+
+            let numberOfPackets = (arguments["numberOfPackets"] as? UInt16)
+
+            let enablePRNs = (arguments["enablePRNs"] as? Bool) ?? false
             
             startDfu(address,
                      name: name,
                      filePath: filePath,
                      forceDfu: forceDfu,
+                     numberOfPackets: numberOfPackets,
+                     enablePRNs: enablePRNs,
+                     forceScanningForNewAddressInLegacyDfu: forceScanningForNewAddressInLegacyDfu,
                      enableUnsafeExperimentalButtonlessServiceInSecureDfu: enableUnsafeExperimentalButtonlessServiceInSecureDfu,
                      alternativeAdvertisingNameEnabled: alternativeAdvertisingNameEnabled,
                      result: result)
@@ -71,6 +80,9 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
         name: String?,
         filePath: String,
         forceDfu: Bool?,
+        numberOfPackets: UInt16?,
+        enablePRNs: Bool,
+        forceScanningForNewAddressInLegacyDfu: Bool,
         enableUnsafeExperimentalButtonlessServiceInSecureDfu: Bool?,
         alternativeAdvertisingNameEnabled: Bool?,
         result: @escaping FlutterResult) {
@@ -101,6 +113,12 @@ public class SwiftFlutterNordicDfuPlugin: NSObject, FlutterPlugin, DFUServiceDel
         if let alternativeAdvertisingNameEnabled = alternativeAdvertisingNameEnabled {
             dfuInitiator.alternativeAdvertisingNameEnabled = alternativeAdvertisingNameEnabled
         }
+        
+        if let numberOfPackets = numberOfPackets, enablePRNs {
+            dfuInitiator.packetReceiptNotificationParameter = numberOfPackets
+        }
+
+        dfuInitiator.forceScanningForNewAddressInLegacyDfu = forceScanningForNewAddressInLegacyDfu
         
         pendingResult = result
         deviceAddress = address
