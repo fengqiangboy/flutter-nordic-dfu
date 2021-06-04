@@ -61,8 +61,12 @@ class IosSpecialParameter {
   ///Defaults to true.
   final bool alternativeAdvertisingNameEnabled;
 
+  ///Defaults to false
+  final bool forceScanningForNewAddressInLegacyDfu;
+
   const IosSpecialParameter({
     this.alternativeAdvertisingNameEnabled,
+    this.forceScanningForNewAddressInLegacyDfu = false,
   });
 }
 
@@ -169,7 +173,6 @@ class FlutterNordicDfu {
       'restoreBond': androidSpecialParameter?.restoreBond,
       'packetReceiptNotificationsEnabled':
           androidSpecialParameter?.packetReceiptNotificationsEnabled,
-      'restoreBond': androidSpecialParameter?.restoreBond,
       'startAsForegroundService':
           androidSpecialParameter?.startAsForegroundService,
       'alternativeAdvertisingNameEnabled':
