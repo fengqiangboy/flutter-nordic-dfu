@@ -179,7 +179,7 @@ class DeviceItem extends StatelessWidget {
                 ],
               ),
             ),
-            FlatButton(
+            TextButton(
                 onPressed: onPress,
                 child: isRunningItem ? Text("Abort Dfu") : Text("Start Dfu"))
           ],
