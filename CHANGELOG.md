@@ -1,3 +1,6 @@
+## 3.0.0
+* Adapt flutter 2.0
+
 ## 2.4.0
 * Update Android library to 1.10.1
 
