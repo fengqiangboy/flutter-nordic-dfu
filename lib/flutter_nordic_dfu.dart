@@ -71,10 +71,10 @@ class IosSpecialParameter {
 }
 
 class FlutterNordicDfu {
-  static const String NAMESPACE = 'com.timeyaa.flutter_nordic_dfu';
+  static const String kNamespace = 'com.timeyaa.flutter_nordic_dfu';
 
   static const MethodChannel _channel =
-      const MethodChannel('$NAMESPACE/method');
+       MethodChannel('$kNamespace/method');
 
   /// Start dfu handle
   /// [address] android: mac address iOS: device uuid
