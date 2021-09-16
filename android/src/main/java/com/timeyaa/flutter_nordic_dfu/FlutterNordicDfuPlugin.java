@@ -67,7 +67,6 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler, FlutterPlugin,
      * Activity this plugin is attached to. Can be null
      */
     private Activity activity;
-    
 
     public static void registerWith(Registrar registrar) {
         FlutterNordicDfuPlugin instance = new FlutterNordicDfuPlugin();
@@ -80,7 +79,8 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler, FlutterPlugin,
 
     /**
      * Initializes the plugin in a binding-agnostic way.
-     * @param context either registrar.context() or binding.getApplicationContext()
+     *
+     * @param context         either registrar.context() or binding.getApplicationContext()
      * @param binaryMessenger either registrar.messenger() or binding.getBinaryMessenger()
      */
     private void init(Context context, BinaryMessenger binaryMessenger) {
@@ -89,7 +89,6 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler, FlutterPlugin,
         channel.setMethodCallHandler(this);
         DfuServiceListenerHelper.registerProgressListener(context, mDfuProgressListener);
     }
-
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
@@ -152,8 +151,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler, FlutterPlugin,
             if (fileInAsset) {
                 if (isV2) {
                     filePath = FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(filePath);
-                }
-                else {
+                } else {
                     filePath = registrar.lookupKeyForAsset(filePath);
                 }
 
@@ -161,12 +159,12 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler, FlutterPlugin,
                         + UUID.randomUUID().toString();
                 // copy asset file to temp path
                 ResourceUtils.copyFileFromAssets(filePath, tempFileName, mContext);
-                // now, the path is an absolute path, and can pass it to nordic dfu libarary
+                // now, the path is an absolute path, and can pass it to nordic dfu library
                 filePath = tempFileName;
             }
 
             pendingResult = result;
-            startDfu(address, name, filePath, forceDfu, enableUnsafeExperimentalButtonlessServiceInSecureDfu, disableNotification, keepBond, packetReceiptNotificationsEnabled, restoreBond, startAsForegroundService, result,numberOfPackets,enablePRNs);
+            startDfu(address, name, filePath, forceDfu, enableUnsafeExperimentalButtonlessServiceInSecureDfu, disableNotification, keepBond, packetReceiptNotificationsEnabled, restoreBond, startAsForegroundService, result, numberOfPackets, enablePRNs);
         } else if (call.method.equals("abortDfu")) {
             if (controller != null) {
                 controller.abort();
@@ -179,14 +177,14 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler, FlutterPlugin,
     /**
      * Start Dfu
      */
-    private void startDfu(String address, @Nullable String name, String filePath, Boolean forceDfu, Boolean enableUnsafeExperimentalButtonlessServiceInSecureDfu, Boolean disableNotification, Boolean keepBond, Boolean packetReceiptNotificationsEnabled, Boolean restoreBond, Boolean startAsForegroundService, Result result,Integer numberOfPackets,Boolean enablePRNs) {
+    private void startDfu(String address, @Nullable String name, String filePath, Boolean forceDfu, Boolean enableUnsafeExperimentalButtonlessServiceInSecureDfu, Boolean disableNotification, Boolean keepBond, Boolean packetReceiptNotificationsEnabled, Boolean restoreBond, Boolean startAsForegroundService, Result result, Integer numberOfPackets, Boolean enablePRNs) {
 
         DfuServiceInitiator starter = new DfuServiceInitiator(address)
                 .setZip(filePath)
                 .setKeepBond(true)
-                .setForceDfu(forceDfu == null ? false:forceDfu)
-                .setPacketsReceiptNotificationsEnabled(enablePRNs == null ? Build.VERSION.SDK_INT < Build.VERSION_CODES.M:enablePRNs)
-                .setPacketsReceiptNotificationsValue(numberOfPackets== null ? 0 :numberOfPackets)
+                .setForceDfu(forceDfu == null ? false : forceDfu)
+                .setPacketsReceiptNotificationsEnabled(enablePRNs == null ? Build.VERSION.SDK_INT < Build.VERSION_CODES.M : enablePRNs)
+                .setPacketsReceiptNotificationsValue(numberOfPackets == null ? 0 : numberOfPackets)
                 .setPrepareDataObjectDelay(400)
                 .setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true);
         if (name != null) {
@@ -352,8 +350,5 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler, FlutterPlugin,
             }
         }, 200);
     }
-
-
-
 }
 
