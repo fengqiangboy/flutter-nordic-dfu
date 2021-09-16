@@ -67,9 +67,7 @@ public class FlutterNordicDfuPlugin implements MethodCallHandler, FlutterPlugin,
      * Activity this plugin is attached to. Can be null
      */
     private Activity activity;
-
-    private FlutterNordicDfuPlugin() {
-    }
+    
 
     public static void registerWith(Registrar registrar) {
         FlutterNordicDfuPlugin instance = new FlutterNordicDfuPlugin();
