@@ -1,4 +1,4 @@
-package com.timeyaa.flutter_nordic_dfu
+package com.timeyaa.flutter_nordic_dfu_example
 
 //import android.os.Bundle
 //
