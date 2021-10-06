@@ -1,4 +1,4 @@
-group 'com.timeyaa.flutternordicdfu'
+group 'com.timeyaa.flutter_nordic_dfu'
 version '1.0-SNAPSHOT'
 
 buildscript {

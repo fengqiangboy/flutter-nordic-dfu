@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.timeyaa.flutternordicdfuexample">
+    package="com.timeyaa.flutter_nordic_dfu_example">
 
     <!-- The INTERNET permission is required for development. Specifically,
          flutter needs it to communicate with the running application

@@ -1,4 +1,4 @@
-package com.timeyaa.flutternordicdfu;
+package com.timeyaa.flutter_nordic_dfu;
 
 import android.content.Context;
 import android.os.Environment;
