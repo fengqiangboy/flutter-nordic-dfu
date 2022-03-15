@@ -100,16 +100,18 @@ class FlutterNordicDfu {
         const AndroidSpecialParameter(),
     IosSpecialParameter iosSpecialParameter = const IosSpecialParameter(),
   }) async {
-
+    print("calling method");
     _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
         case "onDeviceConnected":
+          print("calling method: onDeviceConnected");
           progressListener?.onDeviceConnected(call.arguments);
           break;
         case "onDeviceConnecting":
           progressListener?.onDeviceConnecting(call.arguments);
           break;
         case "onDeviceDisconnected":
+          print("calling method: onDeviceDisconnected");
           progressListener?.onDeviceDisconnected(call.arguments);
           break;
         case "onDeviceDisconnecting":
@@ -119,9 +121,11 @@ class FlutterNordicDfu {
           progressListener?.onDfuAborted(call.arguments);
           break;
         case "onDfuCompleted":
+          print("calling method: onDfuCompleted");
           progressListener?.onDfuCompleted(call.arguments);
           break;
         case "onDfuProcessStarted":
+          print("calling method: onDfuProcessStarted");
           progressListener?.onDfuProcessStarted(call.arguments);
           break;
         case "onDfuProcessStarting":
