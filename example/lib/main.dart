@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:flutter_nordic_dfu/flutter_nordic_dfu.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
+//import 'package:permission_handler:permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,7 +15,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
+  final FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   StreamSubscription<ScanResult>? scanSubscription;
   List<ScanResult> scanResults = <ScanResult>[];
   bool dfuRunning = false;
@@ -53,24 +55,30 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  void startScan() async{
+  void startScan() async {
+    var scanStatus = await Permission.bluetoothScan.request().isGranted;
+    var bluetoothConnectStatus =
+        await Permission.bluetoothConnect.request().isGranted;
+
     scanSubscription?.cancel();
     await flutterBlue.stopScan();
     setState(() {
       scanResults.clear();
-      scanSubscription = flutterBlue.scan().listen(
-        (scanResult) {
-          if (scanResults.firstWhereOrNull(
-                  (ele) => ele.device.id == scanResult.device.id) !=
-              null) {
-            return;
-          }
-          setState(() {
-            /// add result to results if not added
-            scanResults.add(scanResult);
-          });
-        },
-      );
+      if (scanStatus && bluetoothConnectStatus) {
+        scanSubscription = flutterBlue.scan().listen(
+          (scanResult) {
+            if (scanResults.firstWhereOrNull(
+                    (ele) => ele.device.id == scanResult.device.id) !=
+                null) {
+              return;
+            }
+            setState(() {
+              /// add result to results if not added
+              scanResults.add(scanResult);
+            });
+          },
+        );
+      }
     });
   }
 
@@ -161,7 +169,7 @@ class DeviceItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var name = "Unknow";
+    var name = "Unknown";
     if (scanResult!.device.name != null && scanResult!.device.name.length > 0) {
       name = scanResult!.device.name;
     }
