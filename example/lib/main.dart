@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:flutter_nordic_dfu/flutter_nordic_dfu.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
+//import 'package:permission_handler:permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,11 +15,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
-  StreamSubscription<ScanResult> scanSubscription;
+  final FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
+  StreamSubscription<ScanResult>? scanSubscription;
   List<ScanResult> scanResults = <ScanResult>[];
   bool dfuRunning = false;
-  int dfuRunningInx;
+  int? dfuRunningInx;
 
   @override
   void initState() {
@@ -43,6 +46,7 @@ class _MyAppState extends State<MyApp> {
           print('deviceAddress: $deviceAddress, percent: $percent');
         }),
       );
+      print("HELLLOOOOOOOOOOOOOOOOOOOOOOOOO");
       print(s);
       dfuRunning = false;
     } catch (e) {
@@ -51,25 +55,30 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  void startScan() async{
+  void startScan() async {
+    var scanStatus = await Permission.bluetoothScan.request().isGranted;
+    var bluetoothConnectStatus =
+        await Permission.bluetoothConnect.request().isGranted;
+
     scanSubscription?.cancel();
     await flutterBlue.stopScan();
     setState(() {
       scanResults.clear();
-      scanSubscription = flutterBlue.scan().listen(
-        (scanResult) {
-          if (scanResults.firstWhere(
-                  (ele) => ele.device.id == scanResult.device.id,
-                  orElse: () => null) !=
-              null) {
-            return;
-          }
-          setState(() {
-            /// add result to results if not added
-            scanResults.add(scanResult);
-          });
-        },
-      );
+      if (scanStatus && bluetoothConnectStatus) {
+        scanSubscription = flutterBlue.scan().listen(
+          (scanResult) {
+            if (scanResults.firstWhereOrNull(
+                    (ele) => ele.device.id == scanResult.device.id) !=
+                null) {
+              return;
+            }
+            setState(() {
+              /// add result to results if not added
+              scanResults.add(scanResult);
+            });
+          },
+        );
+      }
     });
   }
 
@@ -150,19 +159,19 @@ class ProgressListenerListener extends DfuProgressListenerAdapter {
 }
 
 class DeviceItem extends StatelessWidget {
-  final ScanResult scanResult;
+  final ScanResult? scanResult;
 
-  final VoidCallback onPress;
+  final VoidCallback? onPress;
 
-  final bool isRunningItem;
+  final bool? isRunningItem;
 
   DeviceItem({this.scanResult, this.onPress, this.isRunningItem});
 
   @override
   Widget build(BuildContext context) {
-    var name = "Unknow";
-    if (scanResult.device.name != null && scanResult.device.name.length > 0) {
-      name = scanResult.device.name;
+    var name = "Unknown";
+    if (scanResult!.device.name != null && scanResult!.device.name.length > 0) {
+      name = scanResult!.device.name;
     }
     return Card(
       child: Padding(
@@ -175,14 +184,14 @@ class DeviceItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(name),
-                  Text(scanResult.device.id.id),
-                  Text("RSSI: ${scanResult.rssi}"),
+                  Text(scanResult!.device.id.id),
+                  Text("RSSI: ${scanResult!.rssi}"),
                 ],
               ),
             ),
             TextButton(
                 onPressed: onPress,
-                child: isRunningItem ? Text("Abort Dfu") : Text("Start Dfu"))
+                child: isRunningItem! ? Text("Abort Dfu") : Text("Start Dfu"))
           ],
         ),
       ),
