@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 18
@@ -35,5 +35,5 @@ android {
 
 dependencies {
     implementation 'androidx.core:core:1.0.2'
-    implementation 'no.nordicsemi.android:dfu:1.11.0'
+    implementation 'no.nordicsemi.android:dfu:1.12.0'
 }
